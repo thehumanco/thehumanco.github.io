@@ -6,6 +6,7 @@ const OrbitRing = ({
   direction = "clockwise",
   speed = 30,
   color = "#111",
+  forceSingleBlue = false,
 }) => {
   const rotation =
     direction === "clockwise" ? "animate-spin-rotate" : "animate-spin-reverse";
@@ -25,10 +26,15 @@ const OrbitRing = ({
     }
   }, [circumference, radius]);
 
-  // Build tspans with random blue highlights
+  const blueIndex = forceSingleBlue
+    ? Math.floor(Math.random() * repeatCount)
+    : null;
+
   const tspans = Array.from({ length: repeatCount }).map((_, idx) => {
-    const isBlue = Math.random() < 0.1; // ~10% chance
-    const fill = isBlue ? "#0984e3" : color; // Electric blue
+    const isBlue = forceSingleBlue
+      ? idx === blueIndex
+      : Math.random() < 0.1;
+    const fill = isBlue ? "#0984e3" : color;
     return (
       <tspan key={idx} fill={fill}>
         {phrase + "   "}
@@ -75,7 +81,6 @@ const OrbitRing = ({
   );
 };
 
-
 function App() {
   const mechaRef = useRef(null);
   const [innerRadius, setInnerRadius] = useState(100);
@@ -87,17 +92,16 @@ function App() {
       if (mechaRef.current) {
         const rect = mechaRef.current.getBoundingClientRect();
         const maxDim = Math.max(rect.width, rect.height);
-        const computedInnerRadius = maxDim / 2 + 60; // your padding
+        const computedInnerRadius = maxDim / 2 + 60;
         setInnerRadius(computedInnerRadius);
 
-        // Calculate available height with 20% top + bottom margin
-        const availableHeight = window.innerHeight * 0.7; // 60% viewport height for rings
+        const availableHeight = window.innerHeight * 0.6;
         const maxRadius = availableHeight / 2;
+        const maxRings = Math.floor(
+          (maxRadius - computedInnerRadius) / ringSpacing
+        );
 
-        // Calculate max ring count that fits
-        const maxRings = Math.floor((maxRadius - computedInnerRadius) / ringSpacing);
-
-        setRingCount(Math.max(1, maxRings)); // at least 1 ring
+        setRingCount(Math.max(1, maxRings));
       }
     };
 
@@ -112,12 +116,11 @@ function App() {
     const speed = 20 + i * 5;
     const gray = Math.floor((i / (ringCount - 1 || 1)) * 200 + 20);
     const color = `rgb(${gray},${gray},${gray})`;
-    return { radius, direction, speed, color };
+    return { radius, direction, speed, color, isInner: i === 0 };
   });
 
   return (
     <div className="relative flex items-center justify-center w-screen h-screen bg-white overflow-hidden">
-      {/* Use holo-text class for holographic shimmering effect */}
       <h1
         ref={mechaRef}
         className="text-4xl font-bold z-10 select-none pointer-events-none"
@@ -126,7 +129,11 @@ function App() {
       </h1>
 
       {rings.map((ring) => (
-        <OrbitRing key={ring.radius} {...ring} />
+        <OrbitRing
+          key={ring.radius}
+          {...ring}
+          forceSingleBlue={ring.isInner}
+        />
       ))}
     </div>
   );
