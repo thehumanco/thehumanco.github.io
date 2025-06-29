@@ -1,59 +1,135 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import "./index.css";
 
-export default function Landing() {
-  const lines = Array(5).fill("the human company");
+const OrbitRing = ({
+  radius,
+  direction = "clockwise",
+  speed = 30,
+  color = "#111",
+}) => {
+  const rotation =
+    direction === "clockwise" ? "animate-spin-rotate" : "animate-spin-reverse";
 
-  return (
-    <div className="flex flex-col justify-center items-start min-h-screen bg-white p-12 space-y-10">
-      {/* Logo */}
-      <h1 className="font-serif text-7xl font-bold">Mecha</h1>
-      <div className="w-full border-t border-black"></div>
+  const circumference = 2 * Math.PI * radius;
+  const textRef = useRef(null);
+  const [repeatCount, setRepeatCount] = useState(1);
 
-      {/* Marquee Lines */}
-      <div className="space-y-2">
-        {lines.map((text, idx) => (
-          <Marquee key={idx} reverse={idx % 2 === 1}>
-            {text}
-          </Marquee>
-        ))}
-      </div>
-
-      {/* Footer */}
-      <div className="pt-10 text-black text-sm">June 2025</div>
-    </div>
-  );
-}
-
-function Marquee({ children, reverse = false }) {
-  const ref = useRef(null);
+  const phrase = "the human company";
 
   useEffect(() => {
-    const el = ref.current;
-    let animationId;
-    let offset = 0;
+    if (textRef.current) {
+      const singleTextWidth = textRef.current.getComputedTextLength();
+      const gap = radius * 0.05;
+      const neededRepeats = Math.ceil(circumference / (singleTextWidth + gap)) - 1;
+      setRepeatCount(neededRepeats);
+    }
+  }, [circumference, radius]);
 
-    const step = () => {
-      offset += reverse ? -1 : 1;
-      if (el) {
-        el.style.transform = `translateX(${offset}px)`;
-      }
-      animationId = requestAnimationFrame(step);
-    };
-    step();
-
-    return () => cancelAnimationFrame(animationId);
-  }, [reverse]);
+  // Build tspans with random blue highlights
+  const tspans = Array.from({ length: repeatCount }).map((_, idx) => {
+    const isBlue = Math.random() < 0.1; // ~10% chance
+    const fill = isBlue ? "#0984e3" : color; // Electric blue
+    return (
+      <tspan key={idx} fill={fill}>
+        {phrase + "   "}
+      </tspan>
+    );
+  });
 
   return (
-    <div className="overflow-hidden whitespace-nowrap">
-      <div
-        ref={ref}
-        className="inline-block text-2xl font-sans text-black opacity-70"
+    <svg
+      viewBox="-250 -250 500 500"
+      className={`absolute w-[500px] h-[500px] ${rotation}`}
+      style={{ animationDuration: `${speed}s` }}
+    >
+      <defs>
+        <path
+          id={`circle-${radius}`}
+          d={`
+            M ${radius}, 0
+            a ${radius},${radius} 0 1,1 ${-radius * 2},0
+            a ${radius},${radius} 0 1,1 ${radius * 2},0
+          `}
+          fill="none"
+        />
+      </defs>
+
+      {/* Hidden measurement text */}
+      <text
+        ref={textRef}
+        className="invisible text-lg"
+        style={{ fontFamily: "'Space Mono', monospace" }}
       >
-        {Array(20)
-          .fill(children)
-          .join(" \u00A0 \u00A0 \u00A0 ")}
-      </div>
+        {phrase}
+      </text>
+
+      <text
+        className="text-lg opacity-80"
+        style={{ fontFamily: "'Space Mono', monospace'" }}
+      >
+        <textPath href={`#circle-${radius}`} startOffset="0%">
+          {tspans}
+        </textPath>
+      </text>
+    </svg>
+  );
+};
+
+
+function App() {
+  const mechaRef = useRef(null);
+  const [innerRadius, setInnerRadius] = useState(100);
+  const [ringCount, setRingCount] = useState(6);
+  const ringSpacing = 30;
+
+  useEffect(() => {
+    const measure = () => {
+      if (mechaRef.current) {
+        const rect = mechaRef.current.getBoundingClientRect();
+        const maxDim = Math.max(rect.width, rect.height);
+        const computedInnerRadius = maxDim / 2 + 60; // your padding
+        setInnerRadius(computedInnerRadius);
+
+        // Calculate available height with 20% top + bottom margin
+        const availableHeight = window.innerHeight * 0.7; // 60% viewport height for rings
+        const maxRadius = availableHeight / 2;
+
+        // Calculate max ring count that fits
+        const maxRings = Math.floor((maxRadius - computedInnerRadius) / ringSpacing);
+
+        setRingCount(Math.max(1, maxRings)); // at least 1 ring
+      }
+    };
+
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, []);
+
+  const rings = Array.from({ length: ringCount }, (_, i) => {
+    const radius = innerRadius + i * ringSpacing;
+    const direction = i % 2 === 0 ? "clockwise" : "counterclockwise";
+    const speed = 20 + i * 5;
+    const gray = Math.floor((i / (ringCount - 1 || 1)) * 200 + 20);
+    const color = `rgb(${gray},${gray},${gray})`;
+    return { radius, direction, speed, color };
+  });
+
+  return (
+    <div className="relative flex items-center justify-center w-screen h-screen bg-white overflow-hidden">
+      {/* Use holo-text class for holographic shimmering effect */}
+      <h1
+        ref={mechaRef}
+        className="text-4xl font-bold z-10 select-none pointer-events-none"
+      >
+        mecha
+      </h1>
+
+      {rings.map((ring) => (
+        <OrbitRing key={ring.radius} {...ring} />
+      ))}
     </div>
   );
 }
+
+export default App;
