@@ -357,12 +357,12 @@ function App() {
         >
           <div className="text-center">
             <p className="text-lg text-neutral-600">
-              {`we exist at a precipice of human experience, magnified by artificial intelligence.`}
+              {`humanity is on a path to future abundance.`}
             </p>
           </div>
           <div className="text-center">
             <p className="text-lg text-neutral-600">
-              {`to accelerate humanity's path to future abundance, we are building human foundation models for embodied intelligence, trained and scaled on the collective of human behaviors.`}
+              {`to accelerate this future, we are building human foundation models for embodied intelligence, trained on the collective of human behaviors, at the scale of humanity.`}
             </p>
           </div>
           {secondSectionVisible && (<div className="text-center">
