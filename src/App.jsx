@@ -331,7 +331,7 @@ function App() {
       <section className="relative flex items-center justify-center w-screen h-screen px-[10vw] bg-white overflow-hidden snap-start">
         <h1
           ref={mechaRef}
-          className="text-4xl font-bold z-10 select-none pointer-events-none"
+          className="text-4xl font-bold z-20 select-none pointer-events-none text-black"
         >
           mecha
         </h1>
