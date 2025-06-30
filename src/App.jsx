@@ -82,6 +82,22 @@ const OrbitRing = ({
 
 function DownArrowButton({ targetRef }) {
   const [hover, setHover] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    function checkMobile() {
+      setIsMobile(window.innerWidth <= 768);
+    }
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  const bottomOffset = isMobile
+    ? "calc(env(safe-area-inset-bottom, 16px) + 7rem)" // higher on mobile
+    : "calc(env(safe-area-inset-bottom, 16px) + 2rem)"; // lower on desktop
 
   return (
     <button
@@ -93,8 +109,9 @@ function DownArrowButton({ targetRef }) {
       aria-label="Scroll down"
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
-      className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-gray-600 transition-colors duration-300 outline-none focus:outline-none border-none"
+      className="absolute left-1/2 transform -translate-x-1/2 text-gray-600 transition-colors duration-300 outline-none focus:outline-none border-none"
       style={{
+        bottom: bottomOffset,
         background: "none",
         border: "none",
         cursor: "pointer",
