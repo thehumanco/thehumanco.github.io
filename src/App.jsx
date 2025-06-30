@@ -365,7 +365,7 @@ function App() {
               {`to accelerate this future, we are building human foundation models for embodied intelligence, trained on the collective of human behaviors, at the scale of humanity.`}
             </p>
           </div>
-          {secondSectionVisible && (<div className="text-center">
+          {secondSectionVisible && (<div className="text-center min-h-[4.5em]">
             <TypingTextWithLinks parts={cta_text} typingSpeed={45} />
           </div>)}
         </div>
