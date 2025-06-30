@@ -349,7 +349,7 @@ function App() {
       {/* ===== Second Info/Contact Section ===== */}
       <section
         ref={secondSectionRef}
-        className="w-screen h-screen flex items-center justify-center px-[10vw] bg-[#f5f6fa] snap-start"
+        className="w-screen h-screen flex items-center justify-center px-[10vw] bg-[#f5f7fa] snap-start"
       >
         <div
           className="flex flex-col gap-8"
@@ -362,7 +362,7 @@ function App() {
           </div>
           <div className="text-center">
             <p className="text-lg text-neutral-600">
-              {`to accelerate our path to future abundance, we are building human foundation models for embodied intelligence, trained on the collective behaviors of humanity, scaled at the rate of human experience.`}
+              {`to accelerate humanity's path to future abundance, we are building human foundation models for embodied intelligence, trained and scaled on the collective of human behaviors.`}
             </p>
           </div>
           {secondSectionVisible && (<div className="text-center">
