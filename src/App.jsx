@@ -45,7 +45,7 @@ const OrbitRing = ({
   return (
     <svg
       viewBox="-250 -250 500 500"
-      className={`absolute w-[500px] h-[500px] ${rotation}`}
+      className={`absolute z-0 w-[500px] h-[500px] pointer-events-none ${rotation}`}
       style={{ animationDuration: `${speed}s` }}
     >
       <defs>
@@ -331,7 +331,7 @@ function App() {
       <section className="relative flex items-center justify-center w-screen h-screen px-[10vw] bg-white overflow-hidden snap-start">
         <h1
           ref={mechaRef}
-          className="text-4xl font-bold z-20 select-none pointer-events-none text-black"
+          className="text-4xl font-bold z-10 cursor-text text-black"
         >
           mecha
         </h1>
