@@ -96,7 +96,7 @@ function DownArrowButton({ targetRef }) {
   }, []);
 
   const bottomOffset = isMobile
-    ? "calc(env(safe-area-inset-bottom, 16px) + 7rem)" // higher on mobile
+    ? "calc(env(safe-area-inset-bottom, 16px) + 5rem)" // higher on mobile
     : "calc(env(safe-area-inset-bottom, 16px) + 2rem)"; // lower on desktop
 
   return (
@@ -261,22 +261,29 @@ function App() {
         const computedInnerRadius = maxDim / 2 + 60;
         setInnerRadius(computedInnerRadius);
 
-        const availableHeight = window.innerHeight * 0.6;
+        const viewportHeight = window.visualViewport?.height || window.innerHeight;
+        const availableHeight = viewportHeight * 0.6;
         const maxRadius = availableHeight / 2;
+
         const maxRings = Math.floor(
           (maxRadius - computedInnerRadius) / ringSpacing
         );
         setRingCount(Math.max(1, maxRings));
 
-        // Container width = 2 * (outermost radius) + padding
         const width = (computedInnerRadius + maxRings * ringSpacing) * 2 + 60;
         setContainerWidth(width);
       }
     };
 
-    measure();
+    requestAnimationFrame(measure); // Run after first paint for better accuracy
+
     window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
+    window.visualViewport?.addEventListener("resize", measure);
+
+    return () => {
+      window.removeEventListener("resize", measure);
+      window.visualViewport?.removeEventListener("resize", measure);
+    };
   }, []);
 
   useEffect(() => {
@@ -286,12 +293,12 @@ function App() {
       ([entry]) => {
         if (entry.isIntersecting) {
           setSecondSectionVisible(true);
-          observer.disconnect(); // Optional: stop observing once visible
+          observer.disconnect();
         }
       },
       {
-        root: null, // viewport
-        threshold: 0.5, // 50% of the second section is visible
+        root: null,
+        threshold: 0.5,
       }
     );
 
@@ -365,9 +372,11 @@ function App() {
               {`to accelerate this future, we are building human foundation models for embodied intelligence, trained on the collective of human behaviors, at the scale of humanity.`}
             </p>
           </div>
-          {secondSectionVisible && (<div className="text-center min-h-[4.5em]">
-            <TypingTextWithLinks parts={cta_text} typingSpeed={45} />
-          </div>)}
+          {secondSectionVisible && (
+            <div className="text-center min-h-[4.5em]">
+              <TypingTextWithLinks parts={cta_text} typingSpeed={45} />
+            </div>
+          )}
         </div>
       </section>
     </div>
