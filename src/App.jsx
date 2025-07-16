@@ -258,6 +258,9 @@ function DownArrowButton({ targetRef }) {
   const [isHovered, setIsHovered] = useState(false)
 
   const handleClick = () => {
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur()
+    }
     targetRef.current.scrollIntoView({ behavior: "smooth" })
   }
 
@@ -276,6 +279,12 @@ function DownArrowButton({ targetRef }) {
         cursor: "pointer",
         opacity: isHovered ? 1 : 0.5,
         transition: "opacity 0.3s ease",
+        border: "none",
+        WebkitTapHighlightColor: "transparent",
+        WebkitTouchCallout: "none",
+        touchAction: "manipulation",
+        userSelect: "none",
+        outline: "none",
       }}
     >
       <svg

@@ -13,14 +13,14 @@ canvas {
 }
 
 .responsive-content {
-  width: 90vw;         /* Default for mobile */
-  min-height: 80vh;    /* Reserve vertical space for 15–20 lines */
+  width: 80vw;         /* Default for mobile */
+  min-height: 60vh;    /* Reserve vertical space for 15–20 lines */
 }
 
 /* For tablets and small laptops */
 @media (min-width: 768px) {
   .responsive-content {
-    width: 75vw;
+    width: 50vw;
     min-height: 20vh;
   }
 }
