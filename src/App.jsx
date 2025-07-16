@@ -1,127 +1,278 @@
-import { useEffect, useRef, useState } from "react";
-import "./index.css";
+import { useRef, useEffect, useState } from "react"
+import * as THREE from "three"
+import { Canvas, useFrame } from "@react-three/fiber"
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader"
+import { OrbitControls } from "@react-three/drei"
+import "./App.css"
 
-const OrbitRing = ({
-  radius,
-  direction = "clockwise",
-  speed = 30,
-  color = "#111",
-  forceSingleBlue = false,
-}) => {
-  const rotation =
-    direction === "clockwise" ? "animate-spin-rotate" : "animate-spin-reverse";
+function samplePointsOnGeometry(geometry, count) {
+  const positionAttr = geometry.attributes.position
+  let indexAttr = geometry.index
+  const triangles = []
 
-  const circumference = 2 * Math.PI * radius;
-  const textRef = useRef(null);
-  const [repeatCount, setRepeatCount] = useState(1);
-
-  const phrase = "the human company";
-
-  useEffect(() => {
-    if (textRef.current) {
-      const singleTextWidth = textRef.current.getComputedTextLength();
-      const gap = radius * 0.05;
-      const neededRepeats = Math.ceil(circumference / (singleTextWidth + gap)) - 1;
-      setRepeatCount(neededRepeats);
+  if (indexAttr) {
+    for (let i = 0; i < indexAttr.count; i += 3) {
+      triangles.push([
+        indexAttr.getX(i),
+        indexAttr.getX(i + 1),
+        indexAttr.getX(i + 2),
+      ])
     }
-  }, [circumference, radius]);
+  } else {
+    for (let i = 0; i < positionAttr.count; i += 3) {
+      triangles.push([i, i + 1, i + 2])
+    }
+  }
 
-  const blueIndex = forceSingleBlue
-    ? Math.floor(Math.random() * repeatCount)
-    : null;
+  const cumulativeAreas = []
+  let totalArea = 0
+  for (const tri of triangles) {
+    const a = new THREE.Vector3().fromBufferAttribute(positionAttr, tri[0])
+    const b = new THREE.Vector3().fromBufferAttribute(positionAttr, tri[1])
+    const c = new THREE.Vector3().fromBufferAttribute(positionAttr, tri[2])
+    const area = new THREE.Triangle(a, b, c).getArea()
+    totalArea += area
+    cumulativeAreas.push(totalArea)
+  }
 
-  const tspans = Array.from({ length: repeatCount }).map((_, idx) => {
-    const isBlue = forceSingleBlue
-      ? idx === blueIndex
-      : Math.random() < 0.1;
-    const fill = isBlue ? "#0984e3" : color;
-    return (
-      <tspan key={idx} fill={fill}>
-        {phrase + "   "}
-      </tspan>
-    );
+  function randomPointInTriangle(a, b, c) {
+    let r1 = Math.sqrt(Math.random())
+    let r2 = Math.random()
+    let v1 = a.clone().multiplyScalar(1 - r1)
+    let v2 = b.clone().multiplyScalar(r1 * (1 - r2))
+    let v3 = c.clone().multiplyScalar(r1 * r2)
+    return v1.add(v2).add(v3)
+  }
+
+  const points = []
+  for (let i = 0; i < count; i++) {
+    const r = Math.random() * totalArea
+    let low = 0, high = cumulativeAreas.length - 1
+    while (low < high) {
+      const mid = Math.floor((low + high) / 2)
+      if (cumulativeAreas[mid] < r) low = mid + 1
+      else high = mid
+    }
+    const tri = triangles[low]
+    const a = new THREE.Vector3().fromBufferAttribute(positionAttr, tri[0])
+    const b = new THREE.Vector3().fromBufferAttribute(positionAttr, tri[1])
+    const c = new THREE.Vector3().fromBufferAttribute(positionAttr, tri[2])
+    points.push(randomPointInTriangle(a, b, c))
+  }
+
+  return points
+}
+
+function normalizeGeometry(geometry) {
+  geometry.computeBoundingBox()
+  const boundingBox = geometry.boundingBox
+  const center = new THREE.Vector3()
+  boundingBox.getCenter(center)
+
+  const position = geometry.attributes.position
+  for (let i = 0; i < position.count; i++) {
+    const x = position.getX(i) - center.x
+    const y = position.getY(i) - center.y
+    const z = position.getZ(i) - center.z
+    position.setXYZ(i, x, y, z)
+  }
+  position.needsUpdate = true
+
+  geometry.computeBoundingBox()
+  geometry.computeBoundingSphere()
+}
+
+function PointCloudGLB({ url, density = 10000 }) {
+  const group = useRef()
+  const materialRef = useRef()
+  const timeRef = useRef({
+    value: -1.0,   // or your minY start
+    phase: "animating",
+    waitTimer: 0,
   });
 
-  return (
-    <svg
-      viewBox="-250 -250 500 500"
-      className={`absolute z-0 w-[500px] h-[500px] pointer-events-none ${rotation}`}
-      style={{ animationDuration: `${speed}s` }}
-    >
-      <defs>
-        <path
-          id={`circle-${radius}`}
-          d={`
-            M ${radius}, 0
-            a ${radius},${radius} 0 1,1 ${-radius * 2},0
-            a ${radius},${radius} 0 1,1 ${radius * 2},0
-          `}
-          fill="none"
-        />
-      </defs>
-
-      <text
-        ref={textRef}
-        className="invisible text-lg"
-        style={{ fontFamily: "'Space Mono', monospace" }}
-      >
-        {phrase}
-      </text>
-
-      <text
-        className="text-lg opacity-80"
-        style={{ fontFamily: "'Space Mono', monospace'" }}
-      >
-        <textPath href={`#circle-${radius}`} startOffset="0%">
-          {tspans}
-        </textPath>
-      </text>
-    </svg>
-  );
-};
-
-function DownArrowButton({ targetRef }) {
-  const [hover, setHover] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
   useEffect(() => {
-    function checkMobile() {
-      setIsMobile(window.innerWidth <= 768);
+    const loader = new GLTFLoader()
+    loader.load(url, (gltf) => {
+      const scene = gltf.scene
+      const points = []
+
+      scene.traverse((child) => {
+        if (child.isMesh) {
+          normalizeGeometry(child.geometry)
+          const meshPoints = samplePointsOnGeometry(child.geometry, density)
+          points.push(...meshPoints)
+        }
+      })
+
+      const positions = points.map(p => [p.x, p.y, p.z]).flat()
+      const yHeights = points.map(p => p.y)
+
+      const geometry = new THREE.BufferGeometry()
+      geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3))
+      geometry.setAttribute('yHeight', new THREE.Float32BufferAttribute(yHeights, 1))
+
+      const material = new THREE.ShaderMaterial({
+        transparent: true,
+        depthWrite: false,
+        uniforms: {
+          time: { value: -1.0 },
+          dY: { value: 0.4 },
+          startOpacity: { value: 0.1 },
+          endOpacity: { value: 0.5 },
+          color: { value: new THREE.Color(0xffffff) },
+          initial: { value: 1 },   // 1 = first cycle, 0 = subsequent cycles
+        },
+        vertexShader: `
+          uniform float time;
+          uniform float dY;
+          attribute float yHeight;
+          varying float vY;
+          varying float bandFactor;
+
+          void main() {
+            vY = yHeight;
+
+            float sigma = dY / 4.0;
+            float center = time - dY * 0.5;
+            float dist = vY - center;
+            bandFactor = exp(-0.5 * (dist * dist) / (sigma * sigma));
+
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+
+            // Base size 1.5, scaled up to ~3.0 at peak of bandFactor
+            gl_PointSize = 1.5 + 3.0 * bandFactor;
+          }
+        `,
+        fragmentShader: `
+          uniform vec3 color;
+          uniform float startOpacity;
+          uniform float endOpacity;
+          uniform float time;
+          uniform float dY;
+          uniform int initial;
+          varying float bandFactor;
+          varying float vY;
+
+          void main() {
+            float trailingEdge = time + dY * 0.5;
+            float leadingEdge = time - dY * 0.5;
+
+            float opacity = 0.0;
+
+            if (initial == 1) {
+              // FIRST CYCLE: fully transparent ahead of band, startOpacity behind band
+              if (vY > trailingEdge) {
+                opacity = 0.0;
+              } else {
+                opacity = startOpacity;
+              }
+            } else {
+              // SUBSEQUENT CYCLES:
+              if (vY > trailingEdge) {
+                opacity = startOpacity;
+              } else if (vY < leadingEdge) {
+                opacity = startOpacity;
+              } else {
+                opacity = mix(startOpacity, endOpacity, bandFactor);
+              }
+            }
+
+            gl_FragColor = vec4(color, opacity);
+          }
+        `
+      })
+
+      materialRef.current = material
+
+      const pointCloud = new THREE.Points(geometry, material)
+      group.current.clear()
+      group.current.add(pointCloud)
+    })
+  }, [url, density])
+
+  useFrame((state, delta) => {
+    if (!materialRef.current) return;
+
+    const dY = materialRef.current.uniforms.dY.value;
+    const minY = -1.0;           // Adjust based on your geometry normalization
+    const maxY = 1.0 + dY;       // Upper bound for animation
+
+    if (!timeRef.current.phase) {
+      timeRef.current.phase = "animating";
+      timeRef.current.waitTimer = 0;
+      timeRef.current.value = minY;
     }
 
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
+    if (timeRef.current.phase === "animating") {
+      timeRef.current.value += delta * 1.5;  // Animation speed
 
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
+      if (timeRef.current.value >= maxY) {
+        timeRef.current.value = maxY;
+        timeRef.current.phase = "waiting";
+        timeRef.current.waitTimer = 0;
+      }
 
-  const bottomOffset = isMobile
-    ? "calc(env(safe-area-inset-bottom, 16px) + 5rem)" // higher on mobile
-    : "calc(env(safe-area-inset-bottom, 16px) + 2rem)"; // lower on desktop
+    } else if (timeRef.current.phase === "waiting") {
+      timeRef.current.waitTimer += delta;
 
+      if (timeRef.current.waitTimer >= 2.0) {  // Wait 2 seconds at the end
+        timeRef.current.phase = "reset";
+      }
+
+    } else if (timeRef.current.phase === "reset") {
+      timeRef.current.value = minY;
+      timeRef.current.phase = "animating";
+
+      // After first animation cycle, disable initial transparent state
+      if (materialRef.current.uniforms.initial.value === 1) {
+        materialRef.current.uniforms.initial.value = 0;
+      }
+    }
+
+    materialRef.current.uniforms.time.value = timeRef.current.value;
+  });
+
+  return <group ref={group} />
+}
+
+
+function Scene() {
   return (
-    <button
-      onClick={() => {
-        if (targetRef.current) {
-          targetRef.current.scrollIntoView({ behavior: "smooth" });
-        }
-      }}
-      aria-label="Scroll down"
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      className="absolute left-1/2 transform -translate-x-1/2 text-gray-600 transition-colors duration-300 outline-none focus:outline-none border-none"
+    <Canvas camera={{ position: [0, 0, 3], fov: 75 }} style={{ height: "100%", background: "black" }}>
+      <ambientLight />
+      <PointCloudGLB url="/models/mecha.glb" density={15000} />
+      <OrbitControls 
+        enableZoom={false} 
+        autoRotate={true} 
+        autoRotateSpeed={10.0} 
+        minDistance={1.0} 
+        maxDistance={3.0}
+      />
+    </Canvas>
+  )
+}
+
+function DownArrowButton({ targetRef }) {
+  const handleClick = () => {
+    targetRef.current.scrollIntoView({ behavior: "smooth" })
+  }
+  return (
+    <div
+      onClick={handleClick}
       style={{
-        bottom: bottomOffset,
-        background: "none",
-        border: "none",
+        height: "auto",
+        backgroundColor: "black",
+        color: "white",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
         cursor: "pointer",
-        boxShadow: "none",
-        color: hover ? "#0984e3" : "#4b5563", // Tailwind text-gray-600 fallback: #4b5563
       }}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        className="h-8 w-8"
+        style={{ height: "2rem", width: "2rem" }}
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -129,39 +280,8 @@ function DownArrowButton({ targetRef }) {
       >
         <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
       </svg>
-    </button>
-  );
-}
-
-function TypingText({ fullText, typingSpeed = 30, onComplete }) {
-  const [displayedText, setDisplayedText] = useState("");
-  const indexRef = useRef(0);
-  const speedRef = useRef(typingSpeed);
-  const timeoutRef = useRef(null);
-
-  // Keep typingSpeed updated in ref
-  useEffect(() => {
-    speedRef.current = typingSpeed;
-  }, [typingSpeed]);
-
-  useEffect(() => {
-    function typeNextChar() {
-      if (indexRef.current >= fullText.length) {
-        if (onComplete) onComplete();
-        return;
-      }
-
-      setDisplayedText(fullText.slice(0, indexRef.current + 1));
-      indexRef.current += 1;
-      timeoutRef.current = setTimeout(typeNextChar, speedRef.current);
-    }
-
-    typeNextChar();
-
-    return () => clearTimeout(timeoutRef.current);
-  }, [fullText, onComplete]);
-
-  return <span>{displayedText}</span>;
+    </div>
+  )
 }
 
 function TypingTextWithLinks({ parts, typingSpeed = 50, onComplete }) {
@@ -242,79 +362,32 @@ function TypingTextWithLinks({ parts, typingSpeed = 50, onComplete }) {
   );
 }
 
-
 function App() {
-  const mechaRef = useRef(null);
-  const [innerRadius, setInnerRadius] = useState(100);
-  const [ringCount, setRingCount] = useState(6);
-  const ringSpacing = 30;
-  const [containerWidth, setContainerWidth] = useState(500);
-
-  const secondSectionRef = useRef(null);
-  const [secondSectionVisible, setSecondSectionVisible] = useState(false);
+  const secondPageRef = useRef()
+  const [secondSectionVisible, setSecondSectionVisible] = useState(false)
 
   useEffect(() => {
-    const measure = () => {
-      if (mechaRef.current) {
-        const rect = mechaRef.current.getBoundingClientRect();
-        const maxDim = Math.max(rect.width, rect.height);
-        const computedInnerRadius = maxDim / 2 + 60;
-        setInnerRadius(computedInnerRadius);
-
-        const viewportHeight = window.visualViewport?.height || window.innerHeight;
-        const availableHeight = viewportHeight * 0.6;
-        const maxRadius = availableHeight / 2;
-
-        const maxRings = Math.floor(
-          (maxRadius - computedInnerRadius) / ringSpacing
-        );
-        setRingCount(Math.max(1, maxRings));
-
-        const width = (computedInnerRadius + maxRings * ringSpacing) * 2 + 60;
-        setContainerWidth(width);
-      }
-    };
-
-    requestAnimationFrame(measure); // Run after first paint for better accuracy
-
-    window.addEventListener("resize", measure);
-    window.visualViewport?.addEventListener("resize", measure);
-
-    return () => {
-      window.removeEventListener("resize", measure);
-      window.visualViewport?.removeEventListener("resize", measure);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!secondSectionRef.current) return;
-
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setSecondSectionVisible(true);
-          observer.disconnect();
+        } else {
+          setSecondSectionVisible(false);
         }
       },
-      {
-        root: null,
-        threshold: 0.5,
-      }
+      { threshold: 0.5 } // Adjust threshold to when you want to trigger
     );
 
-    observer.observe(secondSectionRef.current);
+    if (secondPageRef.current) {
+      observer.observe(secondPageRef.current);
+    }
 
-    return () => observer.disconnect();
+    return () => {
+      if (secondPageRef.current) {
+        observer.unobserve(secondPageRef.current);
+      }
+    };
   }, []);
-
-  const rings = Array.from({ length: ringCount }, (_, i) => {
-    const radius = innerRadius + i * ringSpacing;
-    const direction = i % 2 === 0 ? "clockwise" : "counterclockwise";
-    const speed = 20 + i * 5;
-    const gray = Math.floor((i / (ringCount - 1 || 1)) * 200 + 20);
-    const color = `rgb(${gray},${gray},${gray})`;
-    return { radius, direction, speed, color, isInner: i === 0 };
-  });
 
   const cta_text = [
     { type: "text", content: "read our " },
@@ -333,54 +406,131 @@ function App() {
   ];
 
   return (
-    <div className="w-screen h-screen overflow-y-scroll snap-y snap-mandatory">
-      {/* ===== First Landing Section ===== */}
-      <section className="relative flex items-center justify-center w-screen h-screen px-[10vw] bg-white overflow-hidden snap-start">
-        <h1
-          ref={mechaRef}
-          className="text-4xl font-bold z-10 cursor-text text-black"
-        >
-          mecha
-        </h1>
+    <div
+      style={{
+        width: "100vw",
+        height: "100vh",
+        overflowY: "scroll",
+        scrollSnapType: "y mandatory",
+        backgroundColor: "black",
+        color: "white",
+      }}
+    >
+      {/* First Page */}
+      <section
+        style={{
+          height: "100vh",
+          width: "100vw",
+          display: "flex",
+          flexDirection: "column",
+          scrollSnapAlign: "start",
+          backgroundColor: "black",
+        }}
+      >
+        <div className="responsive-container" style={{ height: "80vh" }}>
+          <Scene />
+        </div>
 
-        {rings.map((ring) => (
-          <OrbitRing
-            key={ring.radius}
-            {...ring}
-            forceSingleBlue={ring.isInner}
-          />
-        ))}
-        <DownArrowButton targetRef={secondSectionRef} />
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "auto auto", // only as wide as content
+            rowGap: "0.1rem",
+            justifyContent: "center",         // center the grid itself
+            width: "100%",                    // full width of screen
+          }}
+        >
+          {/* Top Left: the */}
+          <div
+            style={{
+              fontWeight: 200,
+              letterSpacing: "0.3em",
+              textAlign: "left",
+              opacity: 0.5,
+              whiteSpace: "nowrap",
+            }}
+          >
+            the
+          </div>
+
+          {/* Top Right: Mecha */}
+          <div
+            style={{
+              fontWeight: 900,
+              letterSpacing: "0.3em",
+              textAlign: "right",
+              whiteSpace: "nowrap",
+            }}
+          >
+            mecha
+          </div>
+
+          {/* Bottom Left: human */}
+          <div
+            style={{
+              fontWeight: 200,
+              letterSpacing: "0.3em",
+              textAlign: "left",
+              opacity: 0.5,
+              whiteSpace: "nowrap",
+            }}
+          >
+            human&nbsp;
+          </div>
+
+          {/* Bottom Right: company */}
+          <div
+            style={{
+              fontWeight: 200,
+              letterSpacing: "0.3em",
+              textAlign: "right",
+              opacity: 0.5,
+              whiteSpace: "nowrap",
+            }}
+          >
+            company
+          </div>
+        </div>
+
+        <br />
+        <br />
+        <DownArrowButton targetRef={secondPageRef} />
       </section>
 
-      {/* ===== Second Info/Contact Section ===== */}
+      {/* Second Page */}
       <section
-        ref={secondSectionRef}
-        className="w-screen h-screen flex items-center justify-center px-[10vw] bg-[#f5f7fa] snap-start"
+        ref={secondPageRef}
+        style={{
+          height: "100vh",
+          width: "100vw",
+          scrollSnapAlign: "start",
+          backgroundColor: "black",
+          color: "white",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          letterSpacing: "0.07rem",
+        }}
       >
         <div
-          className="flex flex-col gap-8"
-          style={{ maxWidth: `${containerWidth}px` }}
+          style={{ width: "50vw" }}
         >
-          <div className="text-center">
-            <p className="text-lg text-neutral-600">
+          <div>
               {`humanity is on a path to future abundance.`}
-            </p>
           </div>
-          <div className="text-center">
-            <p className="text-lg text-neutral-600">
+          <br />
+          <div>
               {`to accelerate this future, we are building human foundation models for embodied intelligence, trained on the collective of human behaviors, at the scale of humanity.`}
-            </p>
           </div>
           {secondSectionVisible && (
-            <div className="text-center min-h-[4.5em]">
+            <div>
               <TypingTextWithLinks parts={cta_text} typingSpeed={45} />
             </div>
           )}
         </div>
       </section>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App

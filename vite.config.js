@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// Replace 'your-username' and 'repo-name' with your actual GitHub username and repo name
+// https://vite.dev/config/
 export default defineConfig({
   base: '/',
   plugins: [react()],
