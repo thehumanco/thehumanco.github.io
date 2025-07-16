@@ -253,13 +253,19 @@ function Scene() {
   )
 }
 
+
 function DownArrowButton({ targetRef }) {
+  const [isHovered, setIsHovered] = useState(false)
+
   const handleClick = () => {
     targetRef.current.scrollIntoView({ behavior: "smooth" })
   }
+
   return (
     <div
       onClick={handleClick}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       style={{
         height: "auto",
         backgroundColor: "black",
@@ -268,6 +274,8 @@ function DownArrowButton({ targetRef }) {
         alignItems: "center",
         justifyContent: "center",
         cursor: "pointer",
+        opacity: isHovered ? 1 : 0.5,
+        transition: "opacity 0.3s ease",
       }}
     >
       <svg
@@ -427,7 +435,7 @@ function App() {
           backgroundColor: "black",
         }}
       >
-        <div className="responsive-container" style={{ height: "80vh" }}>
+        <div className="responsive-container" style={{ height: "70vh" }}>
           <Scene />
         </div>
 
@@ -512,9 +520,7 @@ function App() {
           letterSpacing: "0.07rem",
         }}
       >
-        <div
-          style={{ width: "50vw" }}
-        >
+        <div className="responsive-content">
           <div>
               {`humanity is on a path to future abundance.`}
           </div>
@@ -523,7 +529,7 @@ function App() {
               {`to accelerate this future, we are building human foundation models for embodied intelligence, trained on the collective of human behaviors, at the scale of humanity.`}
           </div>
           {secondSectionVisible && (
-            <div>
+            <div style={{ visibility: secondSectionVisible ? 'visible' : 'hidden' }}>
               <TypingTextWithLinks parts={cta_text} typingSpeed={45} />
             </div>
           )}
