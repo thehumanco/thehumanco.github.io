@@ -241,7 +241,7 @@ function Scene() {
   return (
     <Canvas camera={{ position: [0, 0, 3], fov: 75 }} style={{ height: "100%", background: "black" }}>
       <ambientLight />
-      <PointCloudGLB url="/models/mecha.glb" density={15000} />
+      <PointCloudGLB url="/models/mecha.glb" density={40000} />
       <OrbitControls 
         enableZoom={false} 
         autoRotate={true} 
@@ -457,29 +457,29 @@ function App() {
             width: "100%",                    // full width of screen
           }}
         >
-          {/* Top Left: the */}
+          {/* Top Left: Mecha */}
+          <div
+            style={{
+              fontWeight: 900,
+              letterSpacing: "0.3em",
+              textAlign: "left",
+              whiteSpace: "nowrap",
+            }}
+          >
+            mecha
+          </div>
+
+          {/* Top Right: the */}
           <div
             style={{
               fontWeight: 200,
               letterSpacing: "0.3em",
-              textAlign: "left",
+              textAlign: "right",
               opacity: 0.5,
               whiteSpace: "nowrap",
             }}
           >
             the
-          </div>
-
-          {/* Top Right: Mecha */}
-          <div
-            style={{
-              fontWeight: 900,
-              letterSpacing: "0.3em",
-              textAlign: "right",
-              whiteSpace: "nowrap",
-            }}
-          >
-            mecha
           </div>
 
           {/* Bottom Left: human */}
@@ -500,7 +500,7 @@ function App() {
             style={{
               fontWeight: 200,
               letterSpacing: "0.3em",
-              textAlign: "right",
+              textAlign: "left",
               opacity: 0.5,
               whiteSpace: "nowrap",
             }}
