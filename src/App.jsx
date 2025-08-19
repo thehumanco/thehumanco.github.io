@@ -531,11 +531,11 @@ function App() {
       >
         <div className="responsive-content">
           <div>
-              {`humanity is on a path to future abundance.`}
+              {`to accelerate humanity's path to abundance, we are building foundation models for embodied intelligence at the scale of human labor.`}
           </div>
           <br />
           <div>
-              {`to accelerate this future, we are building human foundation models for embodied intelligence, trained on the collective of human behaviors, at the scale of humanity.`}
+            {`we are backed by naval ravikant, pieter abbeel (amazon robotics), rob fergus (meta ai), milan kovac (ex-tesla optimus), and others.`}
           </div>
           {secondSectionVisible && (
             <div style={{ visibility: secondSectionVisible ? 'visible' : 'hidden' }}>
