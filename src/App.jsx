@@ -535,7 +535,7 @@ function App() {
           </div>
           <br />
           <div>
-            {`we are backed by naval ravikant, pieter abbeel (amazon robotics), rob fergus (meta ai), milan kovac (ex-tesla optimus), and others.`}
+            {`we are backed by naval ravikant, pieter abbeel, rob fergus, milan kovac, and others.`}
           </div>
           {secondSectionVisible && (
             <div style={{ visibility: secondSectionVisible ? 'visible' : 'hidden' }}>
