@@ -531,11 +531,11 @@ function App() {
       >
         <div className="responsive-content">
           <div>
-              {`to accelerate humanity's path to abundance, we are building foundation models for embodied intelligence at the scale of human labor.`}
+            {`to accelerate humanity's path to abundance, we are building foundation models for embodied intelligence at the scale of human labor.`}
           </div>
           <br />
           <div>
-            {`we are backed by naval ravikant, pieter abbeel, rob fergus, milan kovac, and others.`}
+            {`we are backed by naval ravikant, pieter abbeel, rob fergus, milan kovac, thomas wolf, and others.`}
           </div>
           {secondSectionVisible && (
             <div style={{ visibility: secondSectionVisible ? 'visible' : 'hidden' }}>
