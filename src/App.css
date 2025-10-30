@@ -1,6 +1,14 @@
 * {
-  font-family: 'Fira Mono', monospace;
+  font-family: 'Work Sans';
   font-weight: 400;
+  background: #FBF9F7;
+  color: #3B2F2F;
+}
+
+html, body, #root {
+  margin: 0;
+  height: 100%;
+  scroll-behavior: smooth;
 }
 
 canvas {

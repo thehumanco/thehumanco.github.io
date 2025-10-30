@@ -120,8 +120,9 @@ function PointCloudGLB({ url, density = 10000 }) {
           dY: { value: 0.4 },
           startOpacity: { value: 0.1 },
           endOpacity: { value: 0.5 },
-          color: { value: new THREE.Color(0xffffff) },
+          color: { value: new THREE.Color(0x3B2F2F) },  // from App.css: background
           initial: { value: 1 },   // 1 = first cycle, 0 = subsequent cycles
+          blurSoftness: { value: 0.75 },  // BLUR CONTROL: 0.0 = sharp, 1.0 = very soft/blurry (default: 0.5)
         },
         vertexShader: `
           uniform float time;
@@ -151,10 +152,20 @@ function PointCloudGLB({ url, density = 10000 }) {
           uniform float time;
           uniform float dY;
           uniform int initial;
+          uniform float blurSoftness;  // Blur control
           varying float bandFactor;
           varying float vY;
 
           void main() {
+            // Calculate distance from center of point (for circular blur)
+            vec2 center = gl_PointCoord - vec2(0.5);
+            float dist = length(center);
+            
+            // Create radial blur with adjustable softness
+            // blurSoftness of 0.0 = sharp edges, 1.0 = very soft/blurry
+            float blurEdge = mix(0.5, 0.1, blurSoftness);  // Edge where fade starts
+            float radialFade = 1.0 - smoothstep(blurEdge, 0.5, dist);
+            
             float trailingEdge = time + dY * 0.5;
             float leadingEdge = time - dY * 0.5;
 
@@ -177,6 +188,9 @@ function PointCloudGLB({ url, density = 10000 }) {
                 opacity = mix(startOpacity, endOpacity, bandFactor);
               }
             }
+
+            // Apply radial blur fade to final opacity
+            opacity *= radialFade;
 
             gl_FragColor = vec4(color, opacity);
           }
@@ -216,7 +230,7 @@ function PointCloudGLB({ url, density = 10000 }) {
     } else if (timeRef.current.phase === "waiting") {
       timeRef.current.waitTimer += delta;
 
-      if (timeRef.current.waitTimer >= 2.0) {  // Wait 2 seconds at the end
+      if (timeRef.current.waitTimer >= 2.5) {  // Wait 2.5 seconds at the end
         timeRef.current.phase = "reset";
       }
 
@@ -239,7 +253,7 @@ function PointCloudGLB({ url, density = 10000 }) {
 
 function Scene() {
   return (
-    <Canvas camera={{ position: [0, 0, 3], fov: 75 }} style={{ height: "100%", background: "black" }}>
+    <Canvas camera={{ position: [0, 0, 3], fov: 75 }} style={{ height: "100%" }}>
       <ambientLight />
       <PointCloudGLB url="/models/mecha.glb" density={40000} />
       <OrbitControls 
@@ -271,8 +285,6 @@ function DownArrowButton({ targetRef }) {
       onMouseLeave={() => setIsHovered(false)}
       style={{
         height: "auto",
-        backgroundColor: "black",
-        color: "white",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -350,7 +362,7 @@ function TypingTextWithLinks({ parts, typingSpeed = 50, onComplete }) {
           target={part.href.startsWith("http") ? "_blank" : undefined}
           rel={part.href.startsWith("http") ? "noopener noreferrer" : undefined}
           className="underline"
-          style={{ color: "#0984e3" }}
+          style={{ color: "#2F6B4F" }}
         >
           {part.content}
         </a>
@@ -429,8 +441,6 @@ function App() {
         height: "100vh",
         overflowY: "scroll",
         scrollSnapType: "y mandatory",
-        backgroundColor: "black",
-        color: "white",
       }}
     >
       {/* First Page */}
@@ -441,7 +451,6 @@ function App() {
           display: "flex",
           flexDirection: "column",
           scrollSnapAlign: "start",
-          backgroundColor: "black",
         }}
       >
         <div className="responsive-container" style={{ height: "70vh" }}>
@@ -521,8 +530,6 @@ function App() {
           height: "100vh",
           width: "100vw",
           scrollSnapAlign: "start",
-          backgroundColor: "black",
-          color: "white",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
