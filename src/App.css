@@ -1,6 +1,6 @@
 * {
   font-family: 'Work Sans';
-  font-weight: 400;
+  font-weight: normal;
   font-size: 1em;
   background: #FBF9F7;
   color: #3B2F2F;
@@ -17,19 +17,19 @@ canvas {
 }
 
 .responsive-container {
-  width: 40vw;
+  width: 30vw;
   margin: 0 auto;
 }
 
 .responsive-content {
-  width: 80vw;         /* Default for mobile */
+  width: 70vw;         /* Default for mobile */
   min-height: 60vh;    /* Reserve vertical space for 15–20 lines */
 }
 
 /* For tablets and small laptops */
 @media (min-width: 768px) {
   .responsive-content {
-    width: 50vw;
+    width: 30vw;
     min-height: 20vh;
   }
 }
@@ -37,7 +37,7 @@ canvas {
 /* For desktops and large screens */
 @media (min-width: 1024px) {
   .responsive-content {
-    width: 50vw;
+    width: 30vw;
     min-height: 20vh;
   }
 }

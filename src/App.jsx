@@ -301,7 +301,7 @@ function DownArrowButton({ targetRef }) {
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        style={{ height: "2rem", width: "2rem" }}
+        style={{ height: "1.5rem", width: "1.5rem" }}
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -419,13 +419,13 @@ function App() {
   }, []);
 
   const cta_text = [
-    { type: "text", content: "read our " },
+    { type: "text", content: "Read our " },
     {
       type: "typingLink",
       content: "whitepaper",
       href: "https://docs.google.com/document/d/1tDWwM_INWMjXt9wiuTAahJqA8X7qV3vylczf01YtztU/edit?usp=sharing",
     },
-    { type: "text", content: ". contact us at " },
+    { type: "text", content: ". Get in touch at " },
     {
       type: "typingLink",
       content: "hello@mecha.company",
@@ -453,71 +453,23 @@ function App() {
           scrollSnapAlign: "start",
         }}
       >
-        <div className="responsive-container" style={{ height: "70vh" }}>
+        <div className="responsive-container" style={{ height: "80vh" }}>
           <Scene />
         </div>
 
+        {/* New Hero Text */}
         <div
           style={{
-            display: "grid",
-            gridTemplateColumns: "auto auto", // only as wide as content
-            rowGap: "0.1rem",
-            justifyContent: "center",         // center the grid itself
-            width: "100%",                    // full width of screen
+            fontWeight: 300,          // Kept it relatively light to match the cinematic vibe
+            letterSpacing: "0.2em",   // Spaced out for a modern look
+            textAlign: "center",
+            width: "100%",
           }}
         >
-          {/* Top Left: Mecha */}
-          <div
-            style={{
-              fontWeight: 900,
-              letterSpacing: "0.3em",
-              textAlign: "left",
-              whiteSpace: "nowrap",
-            }}
-          >
-            mecha
-          </div>
-
-          {/* Top Right: the */}
-          <div
-            style={{
-              fontWeight: 200,
-              letterSpacing: "0.3em",
-              textAlign: "right",
-              opacity: 0.5,
-              whiteSpace: "nowrap",
-            }}
-          >
-            the
-          </div>
-
-          {/* Bottom Left: human */}
-          <div
-            style={{
-              fontWeight: 200,
-              letterSpacing: "0.3em",
-              textAlign: "left",
-              opacity: 0.5,
-              whiteSpace: "nowrap",
-            }}
-          >
-            human&nbsp;
-          </div>
-
-          {/* Bottom Right: company */}
-          <div
-            style={{
-              fontWeight: 200,
-              letterSpacing: "0.3em",
-              textAlign: "left",
-              opacity: 0.5,
-              whiteSpace: "nowrap",
-            }}
-          >
-            company
-          </div>
+          Grounded Superintelligence
         </div>
 
+        <br />
         <br />
         <br />
         <DownArrowButton targetRef={secondPageRef} />
@@ -533,16 +485,13 @@ function App() {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          letterSpacing: "0.07rem",
+          letterSpacing: "0.05rem",
+          lineHeight: "1.5",
         }}
       >
         <div className="responsive-content">
           <div>
-            {`to accelerate humanity's path to abundance, we are building foundation models for embodied intelligence at the scale of human labor.`}
-          </div>
-          <br />
-          <div>
-            {`we are backed by naval ravikant, pieter abbeel, rob fergus, milan kovac, thomas wolf, and others.`}
+            We are building frontier robotics foundation models on human data, vertically integrated over our operations, hardware, and software. We are backed by Naval Ravikant, Pieter Abbeel, Rob Fergus, Milan Kovac, Thomas Wolf, and others.
           </div>
           {secondSectionVisible && (
             <div style={{ visibility: secondSectionVisible ? 'visible' : 'hidden' }}>
