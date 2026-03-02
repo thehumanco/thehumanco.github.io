@@ -3,6 +3,8 @@ import * as THREE from "three"
 import { Canvas, useFrame } from "@react-three/fiber"
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader"
 import { OrbitControls } from "@react-three/drei"
+import { Analytics } from "@vercel/analytics/react"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import "./App.css"
 
 function samplePointsOnGeometry(geometry, count) {
@@ -500,6 +502,8 @@ function App() {
           )}
         </div>
       </section>
+      <Analytics />
+      <SpeedInsights />
     </div>
   )
 }
