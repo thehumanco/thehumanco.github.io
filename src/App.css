@@ -22,22 +22,14 @@ canvas {
 }
 
 .responsive-content {
-  width: 70vw;         /* Default for mobile */
-  min-height: 60vh;    /* Reserve vertical space for 15–20 lines */
+  width: 85%;          /* Scales nicely on phones */
+  max-width: 576px;    /* Locks the width at exactly 576px on laptops & monitors */
+  margin: 0 auto;      /* Keeps the column perfectly centered */
+  min-height: 60vh;    /* Mobile height */
 }
 
-/* For tablets and small laptops */
 @media (min-width: 768px) {
   .responsive-content {
-    width: 30vw;
-    min-height: 20vh;
-  }
-}
-
-/* For desktops and large screens */
-@media (min-width: 1024px) {
-  .responsive-content {
-    width: 30vw;
     min-height: 20vh;
   }
 }
