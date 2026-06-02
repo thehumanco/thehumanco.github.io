@@ -32,6 +32,8 @@ canvas {
    Adjust strength by editing the filter's scale/baseFrequency in App.jsx. */
 .textured {
   filter: url(#paint);
+  display: block;
+  width: 100%;
 }
 
 /* Mobile: shrink the blurb text so long words fit on a line instead of
@@ -40,6 +42,16 @@ canvas {
 .responsive-content,
 .responsive-content p {
   font-size: clamp(0.8rem, 3.6vw, 1rem);
+}
+
+/* Mobile: force the blurb to 90% of the viewport width.
+   Uses vw (90% of viewport) rather than % (90% of parent), since the
+   absolutely-positioned parent may not be full width. */
+@media (max-width: 767px) {
+  .responsive-content {
+    width: 90vw;
+    max-width: 90vw;
+  }
 }
 
 @media (min-width: 768px) {

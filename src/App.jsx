@@ -63,7 +63,15 @@ function App() {
         focusable="false"
       >
         <defs>
-          <filter id="paint">
+          <filter
+            id="paint"
+            x="-5%"
+            y="-5%"
+            width="110%"
+            height="110%"
+            filterUnits="objectBoundingBox"
+            primitiveUnits="userSpaceOnUse"
+          >
             {/* baseFrequency: higher = finer grain. Tune ~0.8–1.5 for a fine paper tooth. */}
             <feTurbulence
               type="fractalNoise"
