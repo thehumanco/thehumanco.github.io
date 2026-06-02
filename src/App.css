@@ -51,6 +51,7 @@ canvas {
   .responsive-content {
     width: 90vw;
     max-width: 90vw;
+    min-height: 0;     /* Let the box hug the text instead of reserving 60vh */
   }
 }
 
