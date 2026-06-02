@@ -34,8 +34,22 @@ canvas {
   filter: url(#paint);
 }
 
+/* Mobile: shrink the blurb text so long words fit on a line instead of
+   wrapping early and stacking vertically. Fluid size scales with viewport
+   width, clamped so it never gets too tiny or too large. */
+.responsive-content,
+.responsive-content p {
+  font-size: clamp(0.8rem, 3.6vw, 1rem);
+}
+
 @media (min-width: 768px) {
   .responsive-content {
     min-height: 20vh;
+  }
+
+  /* On laptops/monitors, return to the normal size. */
+  .responsive-content,
+  .responsive-content p {
+    font-size: 1rem;
   }
 }
