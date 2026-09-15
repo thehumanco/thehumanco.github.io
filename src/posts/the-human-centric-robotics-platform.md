@@ -1,7 +1,7 @@
 ---
 title: The Human-Centric Robotics Platform
 date: September 2026
-order: 2
+order: 3
 author: Ademi Adeniji, Vincent Liu
 description: Announcing the platform for human-centric robotics, RoboCap, and our Grounded API.
 unrelease: false
@@ -20,17 +20,21 @@ The goal of generalist robotics is to achieve and transcend human-level physical
 
 Today, Grounded Superintelligence (GSI) is emerging from stealth to announce the platform for human-centric robotics. Humans are the most abundant source of manipulation data in the world today, and so we’ve built our system around capturing it as accurately as possible. What the keyboard and personal computing were for humanity’s language, we have built for its dexterity.
 
-The first layer we’re releasing is our Grounded API, a suite of state-of-the-art 3D computer vision models to do SLAM, depth estimation, and hand tracking. Our models are state-of-the-art on several public benchmarks, and are optimized for the RoboCap. We are now ramping up mass manufacturing of the RoboCap with our partners. For the first time, anyone can cheaply record and convert raw data into high-quality training tokens for robotics.
+GSI is a team of full-stack roboticists who believe that great data is the foundation of all success in robotics. The first product we’re releasing is [Grounded API](https://app.gsi.company) built on the RoboCap suite. The RoboCap suite includes an ergonomic 6-camera cap and two wrist cameras all wirelessly synchronized. Grounded API is a self-serve application providing state-of-the-art 3D computer vision models to perform SLAM, depth estimation, and hand tracking at the click of a mouse. For the first time, anyone can cheaply record and convert raw data into high-quality training tokens for robotics.
+
+GSI’s models are state-of-the-art: our multi-view hand tracking is pretrained on a proprietary pretraining corpus that tops all of Meta's released datasets. Our GPU-accelerated SLAM beats the widely-used ORB-SLAM3 and NVIDIA's cuVSLAM on [several public benchmarks](https://www.gsi.company/blogs/the-robocap-for-robot-learning). Both achieve sub-1cm accuracy on data from the RoboCap device. We are now ramping up mass manufacturing and deployment of RoboCap and RoboWrist with our partners. 
 
 Robotics is following the trajectory of language models where massive pre-training unlocks baseline generalist capabilities, and targeted post-training solves the long tail. We believe that human data can supply both the large-scale diversity for pre-training and the domain-specific data from real-world deployment settings for post-training.
 
-**How to Work With Us**
+How to Work With Us
 
 - If you are a **Data Vendor**: Deploy our hardware across your industrial network. We’ve distributed 10,000+ devices to vendors supplying scale data to frontier AI labs.
 - If you are a **Business Owner**: Monetize your workforce's daily actions without disrupting operations. We’re already partnering with global staffing platforms like Job&Talent—staffing millions across Fortune 500 companies—to transform raw operational data into valuable robot policy tokens.
 - If you are a **Researcher**: Collect high-fidelity, benchmark-grade hand manipulation data for your own controlled human-to-robot learning experiments.
+- If you are a **Lab**: Access enriched datasets from Robocap deployed in-the-wild at massive scale.
 We are excited to enable everyone to participate in the next generation of robotics foundation models.
 
 Sincerely,
 
 Ademi & Vincent
+

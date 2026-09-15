@@ -100,14 +100,20 @@ function Landing() {
 }
 
 // Placeholder art until posts set `cover:` (image or .mp4) in their frontmatter.
-const MONETS = ['/thumbnails/water-lilies.jpg', '/thumbnails/parliament-sunset.jpg', '/thumbnails/impression-sunrise.jpg']
+// One painting per post (keyed by slug, so adding a post doesn't reshuffle the others).
+const MONETS = {
+  'the-robocap-for-robot-learning': '/thumbnails/water-lilies.jpg',
+  'the-human-centric-robotics-platform': '/thumbnails/parliament-sunset.jpg',
+  'the-robotics-data-pareto-frontier': '/thumbnails/poppy-field.jpg',
+  'the-human-company': '/thumbnails/impression-sunrise.jpg',
+}
 
-const FRAMES = posts.map((p, i) => ({
+const FRAMES = posts.map((p) => ({
   id: p.slug,
   label: p.date,
   title: p.title,
   body: p.description,
-  cover: p.cover || MONETS[i % MONETS.length],
+  cover: p.cover || MONETS[p.slug] || '/thumbnails/water-lilies.jpg',
   to: `/blogs/${p.slug}`,
 }))
 
@@ -170,12 +176,14 @@ function Home() {
 const textOf = (node) =>
   typeof node === 'string' ? node : Array.isArray(node) ? node.map(textOf).join('') : textOf(node?.props?.children ?? '')
 
-// Which section the reader is in: the last `## heading` above 40% of the viewport.
+// Which section the reader is in: the last `## heading` above 40% of the viewport,
+// or the title (TITLE_ID) before the first heading is reached.
+const TITLE_ID = 'post-title'
 function useActiveSection(sections) {
-  const [active, setActive] = useState(sections[0]?.id)
+  const [active, setActive] = useState(TITLE_ID)
   useEffect(() => {
     const onScroll = () => {
-      let current = sections[0]?.id
+      let current = TITLE_ID
       for (const { id } of sections) {
         const el = document.getElementById(id)
         if (el && el.getBoundingClientRect().top < window.innerHeight * 0.4) current = id
@@ -208,16 +216,20 @@ function Post() {
           <Outline
             label="Sections"
             sticky
-            items={sections.map((sec) => ({
-              key: sec.id,
-              label: sec.label,
-              active: sec.id === activeSection,
-              onSelect: () => document.getElementById(sec.id)?.scrollIntoView({ behavior: 'smooth' }),
-            }))}
+            // The essay title leads the outline, then each `##` section.
+            items={[
+              { key: TITLE_ID, label: post.title, active: activeSection === TITLE_ID, onSelect: () => window.scrollTo({ top: 0, behavior: 'smooth' }) },
+              ...sections.map((sec) => ({
+                key: sec.id,
+                label: sec.label,
+                active: sec.id === activeSection,
+                onSelect: () => document.getElementById(sec.id)?.scrollIntoView({ behavior: 'smooth' }),
+              })),
+            ]}
           />
         )}
         <div className="type-body mb-8">{back}</div>
-        <Display>{post.title}</Display>
+        <Display id={TITLE_ID}>{post.title}</Display>
         <Meta className="mt-2">{post.author} · {post.date}</Meta>
         <div className="prose mt-8">
           <ReactMarkdown

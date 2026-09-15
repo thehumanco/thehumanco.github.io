@@ -110,7 +110,17 @@ body { @apply bg-paper text-ink type-body antialiased; }
 .prose .teaser { @apply my-8 grid gap-4 sm:grid-cols-3; }
 .prose .teaser img { @apply w-full rounded-none shadow-none; }
 .prose figure { @apply my-16; }
-.prose table { @apply w-full border-collapse tabular-nums; }
+/* Figure group: figures and tables set apart from the prose with rules and generous padding */
+.prose figure.figures { @apply my-16 py-12 border-y border-rule space-y-4; }
+.prose figure.figures > img + figcaption,
+.prose figure.figures .figure-table + figcaption { @apply mb-10 last:mb-0; }
+.prose figure.figures .figure-table, .prose figure.figures .overflow-x-auto { @apply my-0; }
+.prose figure.figures .figure-table--pair { @apply grid gap-8 md:grid-cols-2; }
+.prose figure.figures table { @apply text-sm; }
+.prose .paper-link { @apply my-8 text-center; }
+/* Breathing room between a table and its caption */
+.prose .figure-table + figcaption, .prose .figure-table--pair table + figcaption, .prose .figure-table--pair .overflow-x-auto + figcaption { @apply mt-6; }
+.prose table { @apply mx-auto border-collapse tabular-nums; }
 .prose th { @apply text-left font-medium border-b border-ink py-2 pr-4 whitespace-nowrap; }
 .prose td { @apply border-b border-rule py-2 pr-4 whitespace-nowrap; }
 /* Italic line right after an image or table = its caption */
