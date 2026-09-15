@@ -1,0 +1,16 @@
+<svg width="130" height="130" viewBox="0 0 130 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g filter="url(#fuzz)">
+  <rect x="17" y="17" width="96" height="96" stroke="#FBF9F7" stroke-width="4"/>
+  <mask id="path-2-inside-1" fill="white">
+    <path d="M15 115C15 87.3858 37.3858 65 65 65C92.6142 65 115 87.3858 115 115L15 115Z"/>
+  </mask>
+  <path d="M15 115H11V119H15V115ZM115 115V119H119V115H115ZM15 115H19C19 89.5949 39.5949 69 65 69V65V61C35.1766 61 11 85.1766 11 115H15ZM65 65V69C90.4051 69 111 89.5949 111 115H115H119C119 85.1766 94.8234 61 65 61V65ZM115 115V111L15 111V115V119L115 119V115Z" fill="#FBF9F7" mask="url(#path-2-inside-1)"/>
+</g>
+  <defs>
+    <filter id="fuzz" x="-5%" y="-5%" width="110%" height="110%" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" seed="4" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G" result="rough"/>
+      <feGaussianBlur in="rough" stdDeviation="0.6"/>
+    </filter>
+  </defs>
+</svg>
