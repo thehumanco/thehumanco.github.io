@@ -2,7 +2,7 @@
 title: The Human Company
 date: June 2025
 order: 1
-author: Ademi Adeniji, Vincent Liu
+author: Vincent Liu, Ademi Adeniji
 description: Our philosophy on how to scale robotics foundation models
 unrelease: false
 ---

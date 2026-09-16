@@ -11,7 +11,7 @@ const pad = (n) => String(n).padStart(2, '0')
 // share of an image spanning both panels plus the 2rem gap. Stacked on phones, each shows it whole.
 // Keyed on src so the flick replays on change.
 function Painting({ src, video, side }) {
-  // Phones: panels stack (carousel 18rem over thumbnail 10rem, 1rem gap), so the painting spans 29rem tall.
+  // Phones: panels stack (two 14rem panels, 1rem gap), so the painting spans 29rem tall.
   const cls = `animate-flick absolute w-full h-[29rem] md:top-0 md:h-full max-w-none object-cover ${side === 'left' ? 'top-0 md:left-0 md:w-[calc(200%+2rem)]' : 'bottom-0 md:left-auto md:right-0 md:w-[calc(200%+2rem)]'}`
   return (
     <div className="painted absolute inset-0" aria-hidden="true">
@@ -81,7 +81,37 @@ export default function FilmRoll({ id, frames, footer }) {
       if (!atEnd && takeStep(e)) { go(from + dir); lastMove = performance.now() }
       else if (settling) lastMove = Math.max(lastMove, performance.now() - 600) // still scrolling: extend
     }
-    // Touch / keyboard scrolling: settle on a whole post once scrolling stops.
+    // Touch: one swipe = one post, matching the trackpad. A long drag keeps stepping every
+    // SWIPE_AGAIN px, the way a big flick does on the wheel. At either end the page scrolls.
+    const SWIPE = 28       // px of drag that commits the first step
+    const SWIPE_AGAIN = 90 // px of further drag per extra step
+    let touchY = 0
+    let dragged = 0
+    let touchSteps = 0
+    const onTouchStart = (e) => {
+      touchY = e.touches[0].clientY
+      dragged = 0
+      touchSteps = 0
+    }
+    const onTouchMove = (e) => {
+      const y = e.touches[0].clientY
+      const dy = touchY - y // dragging up scrolls down
+      touchY = y
+      const dir = Math.sign(dy)
+      const from = heading()
+      const atEnd = (dir < 0 && from === 0) || (dir > 0 && from === frameEls().length - 1)
+      if (atEnd && touchSteps === 0) return // let the page take over
+      e.preventDefault()
+      if (atEnd) return
+      dragged += dy
+      const want = Math.abs(dragged) < SWIPE ? 0 : 1 + Math.floor((Math.abs(dragged) - SWIPE) / SWIPE_AGAIN)
+      if (want > touchSteps) {
+        touchSteps = want
+        go(from + dir)
+        lastMove = performance.now()
+      }
+    }
+    // Keyboard / leftover scrolling: settle on a whole post once scrolling stops.
     let settle
     const onScroll = () => {
       clearTimeout(settle)
@@ -89,12 +119,16 @@ export default function FilmRoll({ id, frames, footer }) {
     }
     window.addEventListener('film:goto', goto)
     roll.addEventListener('wheel', onWheel, { passive: false })
+    roll.addEventListener('touchstart', onTouchStart, { passive: true })
+    roll.addEventListener('touchmove', onTouchMove, { passive: false })
     roll.addEventListener('scroll', onScroll, { passive: true })
     return () => {
       roll.removeEventListener('scroll', update)
       window.removeEventListener('resize', update)
       window.removeEventListener('film:goto', goto)
       roll.removeEventListener('wheel', onWheel)
+      roll.removeEventListener('touchstart', onTouchStart)
+      roll.removeEventListener('touchmove', onTouchMove)
       roll.removeEventListener('scroll', onScroll)
       clearTimeout(settle)
     }
@@ -124,7 +158,7 @@ export default function FilmRoll({ id, frames, footer }) {
         />
         <div className="grid gap-4 md:gap-8 md:grid-cols-2">
         {/* Carousel — sits on the left half of the painting */}
-        <div className="grain relative h-72 md:h-auto md:aspect-[3/2] w-full min-w-0 md:max-h-[calc(100svh-27rem)] md:min-h-72 overflow-hidden rounded-lg bg-ink [perspective:900px]">
+        <div className="grain relative h-56 md:h-auto md:aspect-[3/2] w-full min-w-0 md:max-h-[calc(100svh-27rem)] md:min-h-72 overflow-hidden rounded-lg bg-ink [perspective:900px]">
           <Painting src={cover} video={isVideo} side="left" />
           <div className="vignette" aria-hidden="true" />
           <div ref={rollRef} className="no-scrollbar relative h-full overflow-y-auto px-3 sm:px-5">
@@ -142,7 +176,12 @@ export default function FilmRoll({ id, frames, footer }) {
                 >
                   <button
                     // Centered card opens the post; any other card winds the carousel to it.
-                    onClick={() => (i === active && f.to ? navigate(f.to) : gotoFrame(i))}
+                    onClick={() => {
+                      if (i !== active || !f.to) return gotoFrame(i)
+                      // Remember this post on the home entry, so Back returns to it in the carousel.
+                      window.history.replaceState({ ...window.history.state, usr: { scrollTo: 'blog', post: f.id } }, '')
+                      navigate(f.to)
+                    }}
                     className={`group h-full w-full text-left rounded-sm p-4 sm:p-5 flex flex-col gap-1 overflow-hidden transition-all duration-300 ease-out cursor-pointer ${i === active ? 'bg-paper shadow-xl hover:-translate-y-1 hover:scale-[1.02] hover:shadow-2xl' : 'bg-paper/60 hover:bg-paper/80'}`}
                   >
                     <span className="type-small tabular-nums">{pad(frames.length - i)} — {f.label}</span>
@@ -167,7 +206,7 @@ export default function FilmRoll({ id, frames, footer }) {
         </div>
 
         {/* Right half of the painting */}
-        <div className="grain relative h-40 md:h-auto md:aspect-[3/2] w-full min-w-0 md:max-h-[calc(100svh-27rem)] md:min-h-72 overflow-hidden rounded-lg bg-ink">
+        <div className="grain relative h-56 md:h-auto md:aspect-[3/2] w-full min-w-0 md:max-h-[calc(100svh-27rem)] md:min-h-72 overflow-hidden rounded-lg bg-ink">
           <Painting src={cover} video={isVideo} side="right" />
           <div className="vignette" aria-hidden="true" />
           <span className="absolute z-10 left-4 bottom-4 type-small text-paper/80 tabular-nums">

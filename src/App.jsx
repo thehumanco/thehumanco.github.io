@@ -201,8 +201,11 @@ function Post() {
   const post = getPost(useParams().slug)
   const sections = post?.sections ?? []
   const activeSection = useActiveSection(sections)
+  // Start at the top before the first paint, so the post never appears mid-scroll.
+  useLayoutEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' })
+  }, [post])
   useEffect(() => {
-    window.scrollTo(0, 0)
     document.title = post ? `${post.title} — GSI` : 'GSI'
   }, [post])
   const back = <TextLink variant="quiet" to="/" state={{ scrollTo: 'blog', post: post?.slug }}>← Back to blog</TextLink>
