@@ -152,6 +152,8 @@ export default function FilmRoll({ id, frames, footer }) {
           </p>
           <p className="type-body mt-4">
             Reach out to us at <TextLink href="mailto:hello@gsi.company">hello@gsi.company</TextLink>
+            <span className="mx-3 text-muted">·</span>
+            <TextLink href="https://docs.google.com/forms/d/e/1FAIpQLSdhS6DJrr3Es1JmTYO9cbKfbrTtg8QuwaZKF_PQqaLSFTiotQ/viewform?usp=header">Get an API invite code</TextLink>
           </p>
         </div>
         <div className="relative">

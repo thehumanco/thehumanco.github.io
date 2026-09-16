@@ -13,7 +13,7 @@ unrelease: false
   <img src="/blogs/robocap/01c_robocap_hands.jpg" alt="Hand poses reconstructed from RoboCap footage">
 </div>
 
-<p class="paper-link"><a href="/blogs/robocap/report.html">Read the technical report (PDF)</a></p>
+<p class="paper-link"><a href="/blogs/robocap/report.html">Read the technical report (PDF)</a><span class="sep">·</span><a href="https://robocap.io">Buy a RoboCap</a><span class="sep">·</span><a href="https://docs.google.com/forms/d/e/1FAIpQLSdhS6DJrr3Es1JmTYO9cbKfbrTtg8QuwaZKF_PQqaLSFTiotQ/viewform?usp=header">Get an API invite code</a></p>
 
 Every generation of large-scale robot learning has been defined by the data it could afford to collect, and each source of that data comes with a known cost. Simulation scales with compute, but demands engineering effort that grows with the diversity it aims to produce. Teleoperation captures exactly the states and actions a robot needs at inference, but at the price of slow, unnatural demonstrations through cumbersome robot hardware. UMI-style handheld grippers deploy only the end-effector and scale further, yet they do not generalize past low-DoF manipulators. Egocentric capture, where a person simply wears a device and goes about their work, scales the furthest of all, because the bottleneck becomes human time rather than hardware.
 
@@ -128,3 +128,5 @@ Hand-tracking evaluation remains the weakest link, and not only for us. No publi
 Egocentric data is one of the most scalable sources available to robot learning, but collecting it at the precision and scale that policy learning requires has demanded two things at once: hardware built for 3D estimation, and algorithms robust enough to run unattended on in-the-wild footage. Neither has been something a team could simply buy or call. RoboCap and the Grounded API are our attempt to make both available.
 
 The result we find most consequential is not any single benchmark number, but what bootstrapping 3D labels for in-the-wild data implies about scale. If precise SLAM, depth estimation, and hand tracking do not require motion capture, then the diversity of hand-pose data is no longer bounded by the reach of instrumented spaces, and models trained this way can adapt better than models trained on motion capture itself. Both the device and the API are available today, and we expect the field to find failure modes in them that we have not.
+
+<p class="paper-link"><a href="/blogs/robocap/report.html">Read the technical report (PDF)</a><span class="sep">·</span><a href="https://robocap.io">Buy a RoboCap</a><span class="sep">·</span><a href="https://docs.google.com/forms/d/e/1FAIpQLSdhS6DJrr3Es1JmTYO9cbKfbrTtg8QuwaZKF_PQqaLSFTiotQ/viewform?usp=header">Get an API invite code</a></p>
