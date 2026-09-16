@@ -1,7 +1,7 @@
 // Blog screen: a carousel you scroll (left) that drives a flickering, grainy thumbnail (right).
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Content } from './ui'
+import { Content, TextLink } from './ui'
 import Outline from './Outline'
 import { alreadyStepped, gotoFrame, takePendingFrame, takeStep } from '../film'
 
@@ -149,6 +149,9 @@ export default function FilmRoll({ id, frames, footer }) {
             over operations, hardware, and AI models. We are a team of full-stack roboticists
             who believe that great robotics begins with great data at Internet scale. We are backed by Pieter
             Abbeel, Lerrel Pinto, Rob Fergus, Milan Kovac, Thomas Wolf, Naval Ravikant, and others.
+          </p>
+          <p className="type-body mt-4">
+            Reach out to us at <TextLink href="mailto:hello@gsi.company">hello@gsi.company</TextLink>
           </p>
         </div>
         <div className="relative">
