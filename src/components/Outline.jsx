@@ -5,7 +5,7 @@
 // while a long page (an essay) scrolls.
 import { useLayoutEffect, useRef, useState } from 'react'
 
-export default function Outline({ label, items, sticky = false, inline = false }) {
+export default function Outline({ label, items, sticky = false }) {
   const listRef = useRef(null)
   const [marker, setMarker] = useState(null)
   const activeIndex = items.findIndex((item) => item.active)
@@ -21,10 +21,9 @@ export default function Outline({ label, items, sticky = false, inline = false }
     return () => window.removeEventListener('resize', measure)
   }, [activeIndex, items.length])
 
-  // xl+: hangs in the left margin. Below xl it's hidden, unless `inline` (phones only):
-  // then it sits in its own column beside the content.
+  // Hangs in the left margin on xl+; below that there's no margin for it, so it's hidden.
   return (
-    <nav aria-label={label} className={`${inline ? 'md:hidden' : 'hidden'} xl:block xl:absolute xl:right-full xl:inset-y-0 xl:mr-8 xl:w-44`}>
+    <nav aria-label={label} className="hidden xl:block xl:absolute xl:right-full xl:inset-y-0 xl:mr-8 xl:w-44">
       <div className={sticky ? 'sticky top-1/2 -translate-y-1/2' : 'h-full flex items-start justify-end pt-1.5'}>
         <div className="relative">
           <ol ref={listRef} className="space-y-3 text-right pr-3">

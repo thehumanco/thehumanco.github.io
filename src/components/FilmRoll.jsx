@@ -117,10 +117,9 @@ export default function FilmRoll({ id, frames, footer }) {
             Abbeel, Lerrel Pinto, Rob Fergus, Milan Kovac, Thomas Wolf, Naval Ravikant, and others.
           </p>
         </div>
-        <div className="relative grid grid-cols-[6.5rem_1fr] gap-4 md:block">
+        <div className="relative">
         <Outline
           label="Posts"
-          inline
           items={frames.map((f, i) => ({ key: f.id, label: f.title, active: i === active, onSelect: () => gotoFrame(i) }))}
         />
         <div className="grid gap-4 md:gap-8 md:grid-cols-2">
