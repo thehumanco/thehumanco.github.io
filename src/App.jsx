@@ -5,7 +5,7 @@ import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
 import { Analytics } from '@vercel/analytics/react'
 import logoUrl from './assets/logo.svg'
-import logoGreenUrl from './assets/logo-green.svg'
+import logoBoldUrl from './assets/logo-bold.svg'
 import logoPaperUrl from './assets/logo-paper.svg'
 import { posts, getPost, slugify } from './posts'
 import FilmRoll from './components/FilmRoll'
@@ -82,8 +82,9 @@ function Navbar() {
       <Content>
         <div className="glass rounded-full pl-6 pr-8 h-16 flex items-center justify-between">
           <a href="/" onClick={go('home')} aria-label="Home" className="group type-body">
+            {/* Thicker strokes on hover, matching the nav links bolding */}
             <img src={logoUrl} alt="" className="size-[1.25em] group-hover:hidden" />
-            <img src={logoGreenUrl} alt="" className="size-[1.25em] hidden group-hover:block" />
+            <img src={logoBoldUrl} alt="" className="size-[1.25em] hidden group-hover:block" />
           </a>
           <div className="flex gap-1 sm:gap-2"><NavLinks /></div>
         </div>
@@ -264,9 +265,9 @@ function Post() {
             rehypePlugins={[rehypeRaw]}
             components={{
               h2: ({ children }) => <h2 id={slugify(textOf(children))} className="scroll-mt-32">{children}</h2>,
-              // External links and files (e.g. a PDF report) open in a new tab.
+              // External links and standalone files/pages (a PDF, the report viewer) open in a new tab.
               a: ({ href, id, className, children }) => {
-                const newTab = /^https?:/.test(href) || /\.pdf$/i.test(href)
+                const newTab = /^https?:/.test(href) || /\.(pdf|html)$/i.test(href)
                 return <a href={href} id={id} className={className} {...(newTab && { target: '_blank', rel: 'noopener noreferrer' })}>{children}</a>
               },
               // Wide tables scroll sideways instead of stretching the page.

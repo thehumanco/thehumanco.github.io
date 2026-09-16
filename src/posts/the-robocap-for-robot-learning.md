@@ -13,7 +13,7 @@ unrelease: false
   <img src="/blogs/robocap/01c_robocap_hands.jpg" alt="Hand poses reconstructed from RoboCap footage">
 </div>
 
-<p class="paper-link"><a href="/blogs/robocap/robocap-technical-report.pdf">Read the technical report (PDF)</a></p>
+<p class="paper-link"><a href="/blogs/robocap/report.html">Read the technical report (PDF)</a></p>
 
 Every generation of large-scale robot learning has been defined by the data it could afford to collect, and each source of that data comes with a known cost. Simulation scales with compute, but demands engineering effort that grows with the diversity it aims to produce. Teleoperation captures exactly the states and actions a robot needs at inference, but at the price of slow, unnatural demonstrations through cumbersome robot hardware. UMI-style handheld grippers deploy only the end-effector and scale further, yet they do not generalize past low-DoF manipulators. Egocentric capture, where a person simply wears a device and goes about their work, scales the furthest of all, because the bottleneck becomes human time rather than hardware.
 
