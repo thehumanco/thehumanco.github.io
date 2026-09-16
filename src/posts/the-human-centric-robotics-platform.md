@@ -3,7 +3,7 @@ title: The Human-Centric Robotics Platform
 date: September 2026
 order: 3
 author: Ademi Adeniji, Vincent Liu
-description: Announcing the platform for human-centric robotics, RoboCap, and our Grounded API.
+description: Announcing the platform for human-centric robotics, RoboCap, and our Grounded API
 unrelease: false
 ---
 

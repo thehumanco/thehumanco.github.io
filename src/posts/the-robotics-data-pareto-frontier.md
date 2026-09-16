@@ -3,7 +3,7 @@ title: The Robotics Data Pareto Frontier
 date: January 2026
 order: 2
 author: Vincent Liu
-description: A simple framing for why ego data is inevitable in robotics.
+description: A simple framing for why ego data is inevitable in robotics
 unreleased: false
 thumbnail: https://vincentliu.org/robotics_data_pareto_frontier-top.png
 ---
