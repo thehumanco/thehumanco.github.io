@@ -53,7 +53,7 @@ A windowed estimator forgets, and so drift accumulates on every excursion and re
 
 <figure class="figures">
   <img src="/blogs/robocap/05_scene_reconstruction.jpg" alt="Scene reconstruction over four RoboCap sessions">
-  <figcaption>Figure 4. Scene reconstruction over four RoboCap sessions. Point clouds from each session are projected into a gravity-aligned world frame, and multi-session alignment is solved with RANSAC on 3D-projected SIFT features.</figcaption>
+  <figcaption>Scene reconstruction over four RoboCap sessions. Point clouds from each session are projected into a gravity-aligned world frame, and multi-session alignment is solved with RANSAC on 3D-projected SIFT features.</figcaption>
   <div class="figure-table">
     <table>
       <thead>
@@ -69,7 +69,7 @@ A windowed estimator forgets, and so drift accumulates on every excursion and re
       </tbody>
     </table>
   </div>
-  <figcaption>Table 2. Final (offline) ATE RMSE in cm, mean / median over sequences. A crash or an ATE above 1 m is a failure, counted as (n): excluded from the mean and ∞ in the median. Published numbers are used where they exist; otherwise each system's released code is run with its published configuration on the same inputs. *Monado baselines are the non-causal aggregate medians reported by the dataset authors, and means are not published. †Aria datasets with pseudo-ground truth from Aria MPS.</figcaption>
+  <figcaption>Final (offline) ATE RMSE in cm, mean / median over sequences. A crash or an ATE above 1 m is a failure, counted as (n): excluded from the mean and ∞ in the median. Published numbers are used where they exist; otherwise each system's released code is run with its published configuration on the same inputs. *Monado baselines are the non-causal aggregate medians reported by the dataset authors, and means are not published. †Aria datasets with pseudo-ground truth from Aria MPS.</figcaption>
 </figure>
 
 ## Solving hand tracking without any mocap
