@@ -1,5 +1,5 @@
 // Outline: the index that hangs in the left margin beside the content body (xl screens).
-// Right-aligned titles on a rail; the active entry's title is green, and a green marker slides
+// Titles on a rail; the active entry's title is green, and a green marker slides
 // along the rail to it. Other titles darken on hover.
 // Place inside a `relative` wrapper around the content it outlines. `sticky` keeps it in view
 // while a long page (an essay) scrolls.
@@ -26,12 +26,12 @@ export default function Outline({ label, items, sticky = false }) {
     <nav aria-label={label} className="hidden xl:block xl:absolute xl:right-full xl:inset-y-0 xl:mr-8 xl:w-44">
       <div className={sticky ? 'sticky top-1/2 -translate-y-1/2' : 'h-full flex items-start justify-end pt-1.5'}>
         <div className="relative">
-          <ol ref={listRef} className="space-y-3 text-right pr-3">
+          <ol ref={listRef} className="space-y-3 text-left pr-3">
             {items.map((item) => (
               <li key={item.key} className="relative">
                 <button
                   onClick={item.onSelect}
-                  className={`type-small !text-xs text-right text-balance cursor-pointer transition-colors duration-500 ${item.active ? '!text-accent' : 'hover:!text-ink'}`}
+                  className={`type-small !text-xs text-left cursor-pointer transition-colors duration-500 ${item.active ? '!text-accent' : 'hover:!text-ink'}`}
                 >
                   {item.label}
                 </button>

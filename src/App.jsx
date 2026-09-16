@@ -42,10 +42,34 @@ function useSectionNav() {
   }
 }
 
+// Which nav item the reader is on: the landing screen or the blog screen on the home page,
+// and nothing on an individual post (its own section outline marks where you are instead).
+function useCurrentNav() {
+  const { pathname } = useLocation()
+  const [current, setCurrent] = useState('home')
+  useEffect(() => {
+    if (pathname !== '/') return setCurrent(null)
+    const onScroll = () => {
+      const film = document.getElementById('film')
+      setCurrent(film && film.getBoundingClientRect().top < window.innerHeight * 0.5 ? 'blog' : 'home')
+    }
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [pathname])
+  return current
+}
+
 function NavLinks() {
   const go = useSectionNav()
+  const current = useCurrentNav()
   return NAV.map((n) => (
-    <TextLink key={n.label} variant="quiet" href={n.href ?? `/#${n.id}`} onClick={n.id && go(n.id)}>
+    <TextLink
+      key={n.label}
+      variant={n.id && n.id === current ? 'pillActive' : 'pill'}
+      href={n.href ?? `/#${n.id}`}
+      onClick={n.id && go(n.id)}
+    >
       {n.label}
     </TextLink>
   ))
@@ -61,7 +85,7 @@ function Navbar() {
             <img src={logoUrl} alt="" className="size-[1.25em] group-hover:hidden" />
             <img src={logoGreenUrl} alt="" className="size-[1.25em] hidden group-hover:block" />
           </a>
-          <div className="flex gap-4 sm:gap-8"><NavLinks /></div>
+          <div className="flex gap-1 sm:gap-2"><NavLinks /></div>
         </div>
       </Content>
     </nav>

@@ -9,12 +9,24 @@ const linkStyles = {
   inline: 'underline underline-offset-4 decoration-1 transition-colors hover:text-accent hover:decoration-2',
   // Navigation / quiet link: no underline until hover.
   quiet: 'underline-offset-4 decoration-1 transition-colors hover:underline hover:text-accent hover:decoration-2',
+  // Navbar link: a warm pill marks the section you're on; the rest take one on hover.
+  pill: 'rounded-full px-3 py-1.5 transition-colors hover:bg-ink/8 hover:font-medium',
+  pillActive: 'rounded-full px-3 py-1.5 bg-ink/15 font-medium transition-colors',
   // Block link (cards, rows): no underline; children handle hover via group-hover.
   block: 'group block',
 }
 
+// Bold on hover without the text reflowing: a hidden bold copy reserves the wider width.
+const Steady = ({ children }) => (
+  <span className="grid">
+    <span className="col-start-1 row-start-1 font-medium invisible" aria-hidden="true">{children}</span>
+    <span className="col-start-1 row-start-1">{children}</span>
+  </span>
+)
+
 export const TextLink = ({ href, to, variant = 'inline', className, children, ...rest }) => {
   const cls = cx(linkStyles[variant], className)
+  if (variant === 'pill' || variant === 'pillActive') children = <Steady>{children}</Steady>
   if (to) return <RouterLink to={to} className={cls} {...rest}>{children}</RouterLink>
   const ext = /^https?:/.test(href)
   return (
