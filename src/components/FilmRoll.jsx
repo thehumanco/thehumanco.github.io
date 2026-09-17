@@ -145,7 +145,7 @@ export default function FilmRoll({ id, frames, footer }) {
         {/* About spans both panels */}
         <div className="mb-16">
           <p className="type-body">
-            Grounded Superintelligence is the human-centric robotics platform, vertically integrated
+            Grounded Superintelligence is a human-centric robotics platform, vertically integrated
             over operations, hardware, and AI models. We are a team of full-stack roboticists
             who believe that great robotics begins with great data at Internet scale. We are backed by Pieter
             Abbeel, Lerrel Pinto, Rob Fergus, Milan Kovac, Thomas Wolf, Naval Ravikant, and others.
