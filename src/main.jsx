@@ -1,13 +1,12 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { BrowserRouter } from 'react-router-dom'
-import App from './App.jsx'
+import { ViteReactSSG } from 'vite-react-ssg'
+import { routes, getRoutesToPrerender } from './routes'
 import './index.css'
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </StrictMode>,
-)
+// Pages are rendered to HTML at build time and hydrated in the browser, so crawlers,
+// link previews and anything that doesn't run JavaScript see the real content.
+export const createRoot = ViteReactSSG({ routes })
+
+// vite-react-ssg asks which dynamic routes to generate (one HTML file per post).
+export function includedRoutes() {
+  return getRoutesToPrerender()
+}

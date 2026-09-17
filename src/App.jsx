@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useState } from 'react'
-import { Routes, Route, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { Head } from 'vite-react-ssg'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
@@ -14,7 +15,10 @@ import { TextLink, Content, Display, Text, Meta } from './components/ui'
 import Outline from './components/Outline'
 
 // Always start at the top on refresh instead of restoring the old scroll position.
-if ('scrollRestoration' in history) history.scrollRestoration = 'manual'
+// (Guarded: pages are prerendered in Node, where there is no history.)
+if (typeof window !== 'undefined' && 'scrollRestoration' in window.history) {
+  window.history.scrollRestoration = 'manual'
+}
 
 // "blog" is the carousel screen: scroll to it and wind back to the newest post.
 const scrollToId = (id, behavior = 'smooth', post) => {
@@ -157,9 +161,27 @@ function SiteFooter() {
   return useLocation().pathname === '/' ? null : <Footer />
 }
 
+const SITE_DESCRIPTION =
+  'Grounded Superintelligence is the human-centric robotics platform, vertically integrated over operations, hardware, and AI models.'
+
+// Title, description and link-preview tags, rendered into the HTML at build time.
+function PageHead({ title, description, url }) {
+  return (
+    <Head>
+      <title>{title}</title>
+      <meta name="description" content={description} />
+      <meta property="og:type" content={url === 'https://gsi.company/' ? 'website' : 'article'} />
+      <meta property="og:title" content={title} />
+      <meta property="og:description" content={description} />
+      <meta property="og:url" content={url} />
+      <meta name="twitter:card" content="summary_large_image" />
+      <link rel="canonical" href={url} />
+    </Head>
+  )
+}
+
 function Home() {
   const { state } = useLocation()
-  useEffect(() => { document.title = 'GSI' }, [])
   // Arriving from another page: jump straight to the section before the first paint.
   useLayoutEffect(() => {
     if (state?.scrollTo && state.scrollTo !== 'home') {
@@ -194,7 +216,13 @@ function Home() {
       window.removeEventListener('wheel', onWheel)
     }
   }, [])
-  return <><Landing /><FilmRoll id="film" frames={FRAMES} footer={<Footer home />} /></>
+  return (
+    <>
+      <PageHead title="GSI" description={SITE_DESCRIPTION} url="https://gsi.company/" />
+      <Landing />
+      <FilmRoll id="film" frames={FRAMES} footer={<Footer home />} />
+    </>
+  )
 }
 
 // Plain text of rendered heading children, to derive the same id as the outline.
@@ -230,14 +258,16 @@ function Post() {
   useLayoutEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' })
   }, [post])
-  useEffect(() => {
-    document.title = post ? `${post.title} — GSI` : 'GSI'
-  }, [post])
   const back = <TextLink variant="quiet" to="/" state={{ scrollTo: 'blog', post: post?.slug }}>← Back to blog</TextLink>
 
   if (!post) return <Content className="pt-32 pb-16"><Text>Post not found. {back}</Text></Content>
   return (
     <article className="pt-32 pb-16">
+      <PageHead
+        title={`${post.title} — GSI`}
+        description={post.description || SITE_DESCRIPTION}
+        url={`https://gsi.company/blogs/${post.slug}`}
+      />
       <Content>
         <div className="relative">
         {sections.length > 0 && (
@@ -284,19 +314,16 @@ function Post() {
   )
 }
 
-export default function App() {
+// Shared chrome around every route (see routes.jsx).
+export default function Layout() {
   return (
     <>
       <Navbar />
-      <main>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/blogs/:slug" element={<Post />} />
-          <Route path="*" element={<Home />} />
-        </Routes>
-      </main>
+      <main><Outlet /></main>
       <SiteFooter />
       <Analytics />
     </>
   )
 }
+
+export { Home, Post }
