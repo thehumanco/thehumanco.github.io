@@ -189,7 +189,7 @@ export default function FilmRoll({ id, frames, footer }) {
                     }}
                     className={`group h-full w-full text-left rounded-sm p-4 sm:p-5 flex flex-col gap-1 overflow-hidden transition-all duration-300 ease-out cursor-pointer ${i === active ? 'bg-paper shadow-xl hover:-translate-y-1 hover:scale-[1.02] hover:shadow-2xl' : 'bg-paper/60 hover:bg-paper/80'}`}
                   >
-                    <span className="type-small tabular-nums">{pad(frames.length - i)} — {f.label}</span>
+                    <span className="type-small tabular-nums">{pad(frames.length - i)}<span className="mx-3">·</span>{f.label}</span>
                     <span className="block type-card line-clamp-2 mb-1.5">{f.title}</span>
                     {/* Body fills the remaining space and fades out if it runs long */}
                     {f.body && (
