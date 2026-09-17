@@ -94,9 +94,9 @@ body { @apply bg-paper text-ink type-body antialiased; }
   position: relative;
   isolation: isolate;
   background:
-    linear-gradient(to bottom, rgb(255 255 255 / 0.5), rgb(251 249 247 / 0.32) 55%, rgb(245 241 237 / 0.36));
-  backdrop-filter: blur(20px) saturate(150%) brightness(1.04);
-  -webkit-backdrop-filter: blur(20px) saturate(150%) brightness(1.04);
+    linear-gradient(to bottom, rgb(255 255 255 / 0.72), rgb(251 249 247 / 0.6) 55%, rgb(245 241 237 / 0.64));
+  backdrop-filter: blur(32px) saturate(140%) brightness(1.06);
+  -webkit-backdrop-filter: blur(32px) saturate(140%) brightness(1.06);
   box-shadow: 0 10px 34px rgb(59 47 47 / 0.14);
 }
 

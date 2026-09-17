@@ -288,7 +288,7 @@ function Post() {
         )}
         <div className="type-body mb-8">{back}</div>
         <Display id={TITLE_ID}>{post.title}</Display>
-        <Meta className="mt-2">{post.author} · {post.date}</Meta>
+        <Meta className="mt-2">{post.author}<span className="mx-3">·</span>{post.date}</Meta>
         <div className="prose mt-8">
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
