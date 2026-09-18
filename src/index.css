@@ -107,7 +107,7 @@ body { @apply bg-paper text-ink type-body antialiased; }
 /* Embedded videos (e.g. a launch video) match figures */
 .prose video { @apply block w-full my-8 rounded-lg shadow-lg bg-ink; }
 /* Teaser: three figures in a row (on phones, stacked). Their shadows are baked into the images. */
-.prose .teaser { @apply my-8 grid gap-4 sm:grid-cols-3; }
+.prose .teaser { @apply my-8 grid grid-cols-3 gap-2 sm:gap-4; }
 .prose .teaser img { @apply w-full rounded-none shadow-none; }
 .prose figure { @apply my-16; }
 /* Figure group: figures and tables set apart from the prose with rules and generous padding */

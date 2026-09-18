@@ -81,8 +81,9 @@ function NavLinks() {
 
 function Navbar() {
   const go = useSectionNav()
+  // The bar sits at the top of the page and scrolls away, rather than following the viewport.
   return (
-    <nav className="fixed top-4 inset-x-0 z-50">
+    <nav className="absolute top-4 inset-x-0 z-50">
       <Content>
         <div className="glass rounded-full pl-6 pr-8 h-16 flex items-center justify-between">
           <a href="/" onClick={go('home')} aria-label="Home" className="group type-body">
