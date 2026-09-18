@@ -34,7 +34,7 @@ Robotics is following the trajectory of language models where massive pre-traini
 - If you are a **Business Owner**: Monetize your workforce's daily actions without disrupting operations. We’re already partnering with global staffing platforms like Job&Talent—staffing millions across Fortune 500 companies—to transform raw operational data into valuable robot policy tokens.
 - If you are a **Researcher**: Collect high-fidelity, benchmark-grade hand manipulation data for your own controlled human-to-robot learning experiments.
 
-If you are a lab, please get in touch at [hello@gsi.company](mailto:hello@gsi.company) to access enriched datasets from Robocap deployed in-the-wild at massive scale.
+For access to hardware and Grounded API fill out this order [form](https://docs.google.com/forms/d/e/1FAIpQLSdhS6DJrr3Es1JmTYO9cbKfbrTtg8QuwaZKF_PQqaLSFTiotQ/viewform). If you are a lab, please get in touch at [hello@gsi.company](mailto:hello@gsi.company) to access enriched datasets from Robocap deployed in-the-wild at massive scale.
 We are excited to enable everyone to participate in the next generation of robotics foundation models.
 
 Sincerely,
