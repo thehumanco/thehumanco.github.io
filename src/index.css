@@ -124,6 +124,9 @@ body { @apply bg-paper text-ink type-body antialiased; }
 .prose table { @apply mx-auto border-collapse tabular-nums; }
 .prose th { @apply text-left font-medium border-b border-ink py-2 pr-4 whitespace-nowrap; }
 .prose td { @apply border-b border-rule py-2 pr-4 whitespace-nowrap; }
+/* A reference row shown outside the ranking */
+.prose tr.muted td { @apply text-muted; }
+
 /* A continuation row: no divider above it, label indented under the row it belongs to */
 .prose tr.noline td { @apply border-b-0 pb-1; }
 .prose tr.subrow td { @apply pt-0 pl-0; }

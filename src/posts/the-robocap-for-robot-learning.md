@@ -60,7 +60,7 @@ LaMAria is the closest public match to our setting: a head-worn multi-camera vis
         <tr><th>Method</th><th>Inputs</th><th>Short</th><th>Medium</th><th>Long</th><th>Low light</th><th>Moving</th><th>Avg.</th></tr>
       </thead>
       <tbody>
-        <tr><td>Aria's SLAM‡</td><td>bino, IMU</td><td>90.7</td><td>78.5</td><td>70.9</td><td>84.2</td><td>55.0</td><td>75.9</td></tr>
+        <tr class="muted"><td>Aria’s SLAM‡</td><td>bino, IMU</td><td>90.7</td><td>78.5</td><td>70.9</td><td>84.2</td><td>55.0</td><td>75.9</td></tr>
         <tr><td>ORB-SLAM3</td><td>mono, IMU</td><td>23.0</td><td>10.9</td><td>11.2</td><td>3.1</td><td>2.0</td><td>10.0</td></tr>
         <tr><td>OKVIS2</td><td>bino, IMU</td><td>20.0</td><td>11.6</td><td>2.6</td><td>14.5</td><td>4.7</td><td>10.7</td></tr>
         <tr><td>OpenVINS+Maplab</td><td>bino, IMU</td><td>27.7</td><td>23.4</td><td>12.8</td><td>19.8</td><td>13.9</td><td>19.5</td></tr>
