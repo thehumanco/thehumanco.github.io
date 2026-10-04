@@ -103,12 +103,12 @@ body { @apply bg-paper text-ink type-body antialiased; }
 .prose em { @apply italic; }
 .prose strong { @apply font-bold; font-size: inherit; line-height: inherit; }
 .prose a { @apply underline underline-offset-4 decoration-1 transition-colors hover:text-accent hover:decoration-2; }
-.prose img { @apply max-w-full h-auto mx-auto rounded-lg shadow-lg; }
+.prose img { @apply max-w-full h-auto mx-auto; }
 /* Embedded videos (e.g. a launch video) match figures */
-.prose video { @apply block w-full my-8 rounded-lg shadow-lg bg-ink; }
+.prose video { @apply block w-full my-8 rounded-lg bg-ink; }
 /* Teaser: three figures in a row (on phones, stacked). Their shadows are baked into the images. */
 .prose .teaser { @apply my-8 grid grid-cols-3 gap-2 sm:gap-4; }
-.prose .teaser img { @apply w-full rounded-none shadow-none; }
+.prose .teaser img { @apply w-full; }
 .prose figure { @apply my-16; }
 /* Figure group: figures and tables set apart from the prose with rules and generous padding */
 .prose figure.figures { @apply my-16 py-12 border-y border-rule space-y-4; }
@@ -124,6 +124,10 @@ body { @apply bg-paper text-ink type-body antialiased; }
 .prose table { @apply mx-auto border-collapse tabular-nums; }
 .prose th { @apply text-left font-medium border-b border-ink py-2 pr-4 whitespace-nowrap; }
 .prose td { @apply border-b border-rule py-2 pr-4 whitespace-nowrap; }
+/* A continuation row: no divider above it, label indented under the row it belongs to */
+.prose tr.noline td { @apply border-b-0 pb-1; }
+.prose tr.subrow td { @apply pt-0 pl-0; }
+.prose tr.subrow td:first-child { @apply pl-6 text-muted; }
 /* Italic line right after an image or table = its caption */
 .prose p:has(> img) + p > em:only-child, .prose div:has(> table) + p > em:only-child { @apply type-small block text-center; }
 .prose figure img { @apply mb-4; }

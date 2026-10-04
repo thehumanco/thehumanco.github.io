@@ -47,31 +47,37 @@ Rather than fight a drift that cannot be eliminated mechanically, we correct it 
 
 ## The best of every SLAM, in one estimator
 
-Head motion is the other half of the world-frame picture, and egocentric head motion is a distinctly adversarial setting for SLAM: rapid rotation, close-range parallax, the wearer's own hands moving through the scene, and irregular motion during initialization. Our multi-camera visual-inertial system is built on now-standard ingredients: GPU feature tracking, a keyframe-graph inertial estimator with marginalization, and appearance-based place recognition. Every camera on the device contributes to a single estimate, including the lateral views that have no overlapping partner and so carry landmarks of their own, which is what keeps the solver constrained when the wearer's hands are close to the face and the front pair sees little else. Camera–IMU timing and the stereo extrinsics are refined per session.
+Head motion is the other half of the world-frame picture, and egocentric head motion is a distinctly adversarial setting for SLAM: rapid rotation, close-range parallax, the wearer's own hands moving through the scene, and irregular motion during initialization. Our multi-camera visual-inertial system is built from established components: a GPU-accelerated patch-based optical-flow front-end with a square-root sliding-window estimator, appearance-based place recognition, and an offline keyframe bundle adjustment. One configuration is used for every device and dataset, and the few rig-dependent choices are derived from the rig itself.
 
-Two choices matter more than the rest: landmarks are recognized on return rather than merely forgotten when they leave the window, and a recognized revisit is applied inside the visual-inertial estimator itself rather than handed to a separate pose-graph stage, so the correction is weighted by the same cost that produced the estimate. The trajectories below are the offline product of the system, with a final global BA over the session's keyframes once all revisits are known.
+All cameras feed one estimator. Cameras with overlapping fields of view form a stereo pair, giving landmarks metric depth from their first frame; on RoboCap that is the front pair, while the lateral cameras track their own landmarks monocularly and keep the estimator constrained when the hands cover the front pair. Images are downsampled to at most 1000 px wide, since at full resolution tracks die under motion blur and low light. The estimator is initialized from motion and re-initialized when a divergence check detects implausible biases or pose jumps. Reported trajectories come from an offline visual-inertial bundle adjustment over all keyframes, run once all revisits are known, in which recognized revisits enter as merged landmarks and relative-pose constraints; the causal estimate produced during capture uses the same front-end and estimator, with pose-graph loop closure in place of that refinement.
 
-We evaluate one configuration, with the cameras each dataset provides for SLAM and no per-dataset tuning, against ORB-SLAM3, Basalt, OKVIS2 and cuVSLAM. For head-worn capture at room scale we match or better the best result on every benchmark, and we are the only system that completes all of them: Monado, ADT and HOT3D are finished without a failure, where the strongest baseline on each loses one, three and six sequences. On EuRoC and the TUM-VI rooms we are at parity with OKVIS2 and ORB-SLAM3, whose published figures those benchmarks were tuned against over a decade. On VECtor we lead the nearest system by a factor of four in median error, and on the Aria sets our error is at the level of the MPS pseudo-ground truth and should be read as agreement with it. The causal estimate produced online during capture stays within a factor of two of the offline column.
+LaMAria is the closest public match to our setting: a head-worn multi-camera visual-inertial device recording everyday walking, at city scale. Its 63 test recordings total 27.5 hours and 76 km, with single walks of up to 48 minutes and 2.2 km, and two categories target known failure modes, walks at night and rides on moving platforms. Ground truth is withheld, and trajectories are scored by the benchmark server against surveyed control points. The benchmark is far from saturated: apart from ours, only Aria's own SLAM scores above 35 in any category, and established and recent learned systems lose track on the long walks. Our system ranks second and exceeds the best other entry by 26 to 46 points in every category, with trajectories within 5 m of the control points for 96–100% of the points, against 37–73% for the best other entries.
 
 <figure class="figures">
-  <img src="/blogs/robocap/05_scene_reconstruction.jpg" alt="Scene reconstruction over four RoboCap sessions">
-  <figcaption>Scene reconstruction over four RoboCap sessions. Point clouds from each session are projected into a gravity-aligned world frame, and multi-session alignment is solved with RANSAC on 3D-projected SIFT features.</figcaption>
   <div class="figure-table">
     <table>
       <thead>
-        <tr><th>Benchmark</th><th>ORB-SLAM3</th><th>Basalt</th><th>OKVIS2</th><th>cuVSLAM</th><th>Ours</th></tr>
+        <tr><th>Method</th><th>Inputs</th><th>Short</th><th>Medium</th><th>Long</th><th>Low light</th><th>Moving</th><th>Avg.</th></tr>
       </thead>
       <tbody>
-        <tr><td>EuRoC</td><td>3.5 / 3.3</td><td>5.8 / 5.5</td><td>3.1 / 2.3</td><td>6.6 / 8.4<sup>(4)</sup></td><td><strong>2.7 / 2.4</strong></td></tr>
-        <tr><td>TUM-VI (rooms)</td><td><strong>0.9 / 0.9</strong></td><td>9.2 / 6.3</td><td><strong>0.9 / 0.9</strong></td><td>2.0 / 1.7</td><td><strong>0.9 / 0.9</strong></td></tr>
-        <tr><td>VECtor</td><td>14.7 / 23.0<sup>(5)</sup></td><td>28.0 / 71.1<sup>(7)</sup></td><td>25.7 / 16.8<sup>(3)</sup></td><td>16.5 / 36.0<sup>(7)</sup></td><td><strong>10.5 / 4.0</strong><sup>(4)</sup></td></tr>
-        <tr><td>Monado*</td><td>– / 2.5</td><td>– / 11.2</td><td>– / 2.2</td><td>11.5 / 11.5<sup>(20)</sup></td><td><strong>3.0 / 2.2</strong></td></tr>
-        <tr><td>ADT†</td><td>2.0 / 1.8<sup>(3)</sup></td><td>11.2 / 6.5<sup>(3)</sup></td><td>5.4 / 3.0<sup>(4)</sup></td><td>15.9 / 6.9<sup>(12)</sup></td><td><strong>2.0 / 1.8</strong></td></tr>
-        <tr><td>HOT3D†</td><td>1.3 / ∞<sup>(18)</sup></td><td>4.5 / 4.7<sup>(4)</sup></td><td>1.7 / 1.7<sup>(6)</sup></td><td>46.9 / 55.4<sup>(6)</sup></td><td><strong>0.4 / 0.3</strong></td></tr>
+        <tr><td>Aria's SLAM‡</td><td>bino, IMU</td><td>90.7</td><td>78.5</td><td>70.9</td><td>84.2</td><td>55.0</td><td>75.9</td></tr>
+        <tr><td>ORB-SLAM3</td><td>mono, IMU</td><td>23.0</td><td>10.9</td><td>11.2</td><td>3.1</td><td>2.0</td><td>10.0</td></tr>
+        <tr><td>OKVIS2</td><td>bino, IMU</td><td>20.0</td><td>11.6</td><td>2.6</td><td>14.5</td><td>4.7</td><td>10.7</td></tr>
+        <tr><td>OpenVINS+Maplab</td><td>bino, IMU</td><td>27.7</td><td>23.4</td><td>12.8</td><td>19.8</td><td>13.9</td><td>19.5</td></tr>
+        <tr><td>Best of other submissions</td><td>mono, IMU</td><td>34.2</td><td>29.3</td><td>16.8</td><td>25.4</td><td>15.5</td><td>24.2</td></tr>
+        <tr class="noline"><td>Ours</td><td>bino, IMU</td><td><strong>80.2</strong></td><td><strong>61.6</strong></td><td><strong>59.9</strong></td><td><strong>67.7</strong></td><td><strong>41.9</strong></td><td><strong>62.3</strong></td></tr>
+        <tr class="subrow"><td>pose recall @5 m (%)</td><td></td><td>99.9</td><td>96.2</td><td>99.3</td><td>99.9</td><td>–</td><td></td></tr>
       </tbody>
     </table>
   </div>
-  <figcaption>Final (offline) ATE RMSE in cm, mean / median over sequences. A crash or an ATE above 1 m is a failure, counted as (n): excluded from the mean and ∞ in the median. Published numbers are used where they exist; otherwise each system's released code is run with its published configuration on the same inputs. *Monado baselines are the non-causal aggregate medians reported by the dataset authors, and means are not published. †Aria datasets with pseudo-ground truth from Aria MPS.</figcaption>
+  <figcaption>Official LaMAria test-set results (control-point score, higher is better). Baselines marked as reproduced by the benchmark authors; "best of other submissions" is the highest score per category over all other public entries. ‡Aria's SLAM is excluded from the ranking as a reference: it is the device manufacturer's own system, developed together with the glasses, and the solution used to initialize the benchmark's ground-truth pipeline.</figcaption>
+</figure>
+
+Run unchanged on five further public benchmarks with different rigs and motion — EuRoC, the TUM-VI rooms, VECtor, Monado and the Aria recordings of ADT and HOT3D — the same configuration is on par with or better than the strongest published systems, and the per-sequence numbers are in the technical report. Two limitations remain. Very fast rotation, above roughly 500°/s where some gyroscopes also saturate, defeats the patch tracker. And loop-closure recall in long featureless halls is weaker than with longer feature tracks: across all 20 TUM-VI sequences, where hall sequences have ground truth only in the start and end room, our median error is 8.1 cm.
+
+<figure class="figures">
+  <img src="/blogs/robocap/05_scene_reconstruction.jpg" alt="Scene reconstruction over four RoboCap sessions">
+  <figcaption>Scene reconstruction over four RoboCap sessions. Point clouds from each session are projected into the SLAM world frame, leveled with the estimated gravity direction, and multi-session alignment is solved with RANSAC on 3D-projected SIFT features.</figcaption>
 </figure>
 
 ## Solving hand tracking without any mocap
