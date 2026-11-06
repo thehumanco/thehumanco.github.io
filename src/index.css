@@ -20,8 +20,6 @@
 }
 
 html { scroll-behavior: smooth; }
-/* Home page: always rest on a full screen (landing, then about + blog + footer), never between */
-html.snap-screens { scroll-snap-type: y mandatory; }
 .no-scrollbar { scrollbar-width: none; }
 .no-scrollbar::-webkit-scrollbar { display: none; }
 

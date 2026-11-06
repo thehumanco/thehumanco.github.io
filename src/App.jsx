@@ -9,8 +9,7 @@ import logoUrl from './assets/logo.svg'
 import logoBoldUrl from './assets/logo-bold.svg'
 import logoPaperUrl from './assets/logo-paper.svg'
 import { posts, getPost, slugify } from './posts'
-import FilmRoll from './components/FilmRoll'
-import { alreadyStepped, gotoFrame, takeStep } from './film'
+import Gallery from './components/Gallery'
 import { TextLink, Content, Display, Text, Meta } from './components/ui'
 import Outline from './components/Outline'
 
@@ -20,11 +19,10 @@ if (typeof window !== 'undefined' && 'scrollRestoration' in window.history) {
   window.history.scrollRestoration = 'manual'
 }
 
-// "blog" is the carousel screen: scroll to it and wind back to the newest post.
+// "blog" is the gallery below the landing screen; `post` (a slug) targets one card in it.
 const scrollToId = (id, behavior = 'smooth', post) => {
-  // "blog" winds the carousel to `post` (a slug) if given, otherwise the newest post.
-  if (id === 'blog') gotoFrame(Math.max(0, posts.findIndex((p) => p.slug === post)), behavior === 'instant')
-  document.getElementById(id === 'blog' ? 'film' : id)?.scrollIntoView({ behavior })
+  const target = (id === 'blog' && post && document.getElementById(post)) || document.getElementById(id)
+  target?.scrollIntoView({ behavior })
 }
 
 const NAV = [
@@ -100,7 +98,7 @@ function Navbar() {
 
 function Landing() {
   return (
-    <section id="home" className="snap-start snap-always relative h-svh overflow-hidden bg-ink">
+    <section id="home" className="relative h-svh overflow-hidden bg-ink">
       {/* B-roll: full-screen, muted, looping. WebM (VP9) is smaller; MP4 (H.264) covers Safari/older browsers. */}
       <video
         className="absolute inset-0 h-full w-full object-cover"
@@ -119,7 +117,7 @@ function Landing() {
         className="animate-logo-dissolve absolute inset-0 m-auto w-[min(24vw,24vh)] pointer-events-none"
       />
       <button
-        onClick={() => scrollToId('film')}
+        onClick={() => scrollToId('blog')}
         aria-label="Scroll down"
         className="absolute bottom-8 left-1/2 -translate-x-1/2 cursor-pointer text-paper/80 hover:text-paper animate-bounce text-2xl"
       >
@@ -139,20 +137,50 @@ const MONETS = {
 }
 
 const FRAMES = posts.map((p) => ({
-  id: p.slug,
-  label: p.date,
-  title: p.title,
-  body: p.description,
+  ...p,
   cover: p.cover || MONETS[p.slug] || '/thumbnails/water-lilies.jpg',
-  to: `/blogs/${p.slug}`,
 }))
 
 // On home the footer lives inside the second screen (see FilmRoll); elsewhere it ends the page.
+// Small icons, drawn at the text's own size so they sit with the type.
+const SOCIALS = [
+  {
+    label: 'Email us',
+    href: 'mailto:hello@gsi.company',
+    path: 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z',
+    stroke: true,
+  },
+  {
+    label: 'GSI on X',
+    href: 'https://x.com/GroundedSI',
+    path: 'M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z',
+  },
+]
+
 function Footer({ home }) {
   return (
-    <footer className={home ? 'border-t border-rule py-8' : 'border-t border-rule py-16'}>
+    <footer className={home ? 'py-8' : 'py-16'}>
       <Content>
-        <Meta className="text-right">© {new Date().getFullYear()} Grounded Superintelligence</Meta>
+        <div className="flex items-center justify-between gap-6">
+          <div className="flex items-center gap-4">
+            {SOCIALS.map((s) => (
+              <a
+                key={s.label}
+                href={s.href}
+                aria-label={s.label}
+                {...(/^https?:/.test(s.href) && { target: '_blank', rel: 'noopener noreferrer' })}
+                className="text-muted transition-colors hover:text-ink"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true" className="size-4" {...(s.stroke
+                  ? { fill: 'none', stroke: 'currentColor', strokeWidth: 1.5, strokeLinecap: 'round', strokeLinejoin: 'round' }
+                  : { fill: 'currentColor' })}>
+                  <path d={s.path} />
+                </svg>
+              </a>
+            ))}
+          </div>
+          <Meta>© {new Date().getFullYear()} Grounded Superintelligence</Meta>
+        </div>
       </Content>
     </footer>
   )
@@ -191,37 +219,11 @@ function Home() {
       window.history.replaceState({ ...window.history.state, usr: null }, '')
     } else window.scrollTo({ top: 0, behavior: 'instant' })
   }, [state])
-  useEffect(() => {
-    const html = document.documentElement
-    html.classList.add('snap-screens')
-    // Wheel/trackpad: one gesture = one screen (landing ↔ about, blog & footer). Touch uses CSS snapping.
-    const screens = () => [...document.querySelectorAll('#home, #film')]
-    let target = 0
-    let targetUntil = 0
-    const onWheel = (e) => {
-      if (e.defaultPrevented) return // the carousel consumed it
-      e.preventDefault()
-      if (alreadyStepped(e) || !takeStep(e, 1)) return
-      const els = screens()
-      const tops = els.map((el) => el.getBoundingClientRect().top + window.scrollY)
-      const cur = tops.reduce((b, t, i) => (Math.abs(t - window.scrollY) < Math.abs(tops[b] - window.scrollY) ? i : b), 0)
-      const from = performance.now() < targetUntil ? target : cur
-      target = Math.max(0, Math.min(els.length - 1, from + Math.sign(e.deltaY)))
-      targetUntil = performance.now() + 800
-      if (els[target].tagName === 'FOOTER') window.scrollTo({ top: html.scrollHeight, behavior: 'smooth' })
-      else els[target].scrollIntoView({ behavior: 'smooth' })
-    }
-    window.addEventListener('wheel', onWheel, { passive: false })
-    return () => {
-      html.classList.remove('snap-screens')
-      window.removeEventListener('wheel', onWheel)
-    }
-  }, [])
   return (
     <>
       <PageHead title="GSI" description={SITE_DESCRIPTION} url="https://gsi.company/" />
       <Landing />
-      <FilmRoll id="film" frames={FRAMES} footer={<Footer home />} />
+      <Gallery id="blog" posts={FRAMES} footer={<Footer home />} />
     </>
   )
 }
