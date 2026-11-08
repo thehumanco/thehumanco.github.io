@@ -15,7 +15,7 @@ unrelease: false
 
 Egocentric video is the most scalable source of manipulation data for robot learning, but video alone is not supervision. A robot imitates poses, not pixels, so every hour of footage becomes useful only once someone estimates where the head and hands were, in meters, at every frame. The largest egocentric corpora today are monocular, where metric scale can only be guessed from learned priors. The most accurate ones are captured in motion-capture labs with a handful of participants. Federated efforts pool heterogeneous devices and inherit their differences, and headset-labeled datasets inherit whatever a real-time tracker produced, with no raw multi-view data to re-estimate from.
 
-Today we are releasing **RoboCap-10k**: 10,000 curated hours of unscripted, bimanual manipulation, recorded by workers during their paid shifts in 11 countries, across 21 industry verticals, 365 workplace types, and 619 distinct tasks. Every hour was captured on one device, the [RoboCap](/blogs/the-robocap-for-robot-learning), and processed by one 3D stack, the [Grounded API](https://app.gsi.company). Every frame carries a gravity-aligned 6-DoF head pose and world-frame MANO hand poses, and every episode carries two tiers of language. We release the raw synchronized streams alongside the labels, so they can be audited, and regenerated as methods improve.
+Today we are releasing **RoboCap-10k**: 10,000 curated hours of unscripted, bimanual manipulation, recorded by workers during their paid shifts in 11 countries, across 21 industry verticals, 365 workplace types, and 619 distinct tasks. Every hour was captured on one device, [RoboCap](/blogs/the-robocap-for-robot-learning), and processed by one 3D stack, [Grounded API](https://app.gsi.company). Every frame carries a gravity-aligned 6-DoF head pose and world-frame MANO hand poses, and every episode carries two tiers of language. We release the raw synchronized streams alongside the labels, so they can be audited, and regenerated as methods improve.
 
 ## Real, in-the-wild, occupational work
 
@@ -37,14 +37,14 @@ Every task is labeled with the industry vertical it was recorded in and, indepen
 
 ## Action labels with sub-centimeter precision
 
-Head trajectories come from the Grounded API's multi-camera visual-inertial SLAM, refined offline with a keyframe bundle adjustment over the whole session once every revisit is known. Hand poses come from a feed-forward multi-view tracker that takes crops from every camera that sees a hand and predicts a single MANO pose consistent across views by construction. It holds up through gloves, tool contact, partial occlusion, clutter, and outdoor light.
+Head trajectories come from Grounded API's multi-camera visual-inertial SLAM, refined offline with a keyframe bundle adjustment over the whole session once every revisit is known. Hand poses come from a feed-forward multi-view tracker that takes crops from every camera that sees a hand and predicts a single MANO pose consistent across views by construction. It holds up through gloves, tool contact, partial occlusion, clutter, and outdoor light.
 
 <figure class="figures">
   <img src="/blogs/robocap-10k/02_hands.jpg" alt="Estimated hand meshes rendered over egocentric frames from nine workplaces">
   <figcaption>Hand pose estimates across workplaces, with the estimated MANO meshes rendered over the image (blue: left hand, magenta: right hand).</figcaption>
 </figure>
 
-We evaluate both against optical motion capture on RoboMoCap, recorded on the RoboCap itself. Over 153.4 hours and 4,669 trajectories, head pose reaches a mean absolute trajectory error of 3.19 mm, with metric scale recovered to a median 0.17% without any scale alignment. On held-out test sequences, hands reach 4.5 mm PA-MPJPE over 21 keypoints, and on our internal benchmark, where the true hand shape is known, they reach 9.2 mm of absolute error (MPJPE). On the city-scale LaMAria benchmark, our SLAM scores 72.4, close to Aria's own SLAM at 75.9.
+We evaluate both against optical motion capture on RoboMoCap, recorded on RoboCap itself. Over 153.4 hours and 4,669 trajectories, head pose reaches a mean absolute trajectory error of 3.19 mm, with metric scale recovered to a median 0.17% without any scale alignment. On held-out test sequences, hands reach 4.5 mm PA-MPJPE over 21 keypoints, and on our internal benchmark, where the true hand shape is known, they reach 9.2 mm of absolute error (MPJPE). On the city-scale LaMAria benchmark, our SLAM scores 72.4, close to Aria's own SLAM at 75.9.
 
 <figure class="figures">
   <div class="figure-table">
@@ -66,7 +66,7 @@ We evaluate both against optical motion capture on RoboMoCap, recorded on the Ro
 
 ## Standardized hardware, calibrated online
 
-Because every hour comes from the same hardware design, there is no cross-device domain shift in either the imagery or the quality of the 3D labels. The RoboCap is a 250 g hat with six hardware-synchronized global-shutter cameras: two fisheye stereo pairs that keep the hands inside a metric stereo frustum across the reach envelope, and two lateral wide-angle cameras that catch reaches leaving it. Two IMUs at 200 Hz share the cameras' clock.
+Because every hour comes from the same hardware design, there is no cross-device domain shift in either the imagery or the quality of the 3D labels. RoboCap is a 250 g hat with six hardware-synchronized global-shutter cameras: two fisheye stereo pairs that keep the hands inside a metric stereo frustum across the reach envelope, and two lateral wide-angle cameras that catch reaches leaving it. Two IMUs at 200 Hz share the cameras' clock.
 
 Factory calibration is where accuracy starts, not where it ends. Wearable rigs deform under mechanical and thermal stress, and across our fleet the rotation between stereo cameras drifts by about half a degree, enough for a 1–2 cm depth bias at manipulation range. So for every recording session we re-estimate the rotations of all six cameras jointly from natural correspondences in the footage, holding the factory translations fixed so metric scale stays anchored. Across the release, every one of the 216 devices averages below 1 px of epipolar error, with a median of 0.63 px on the front pair and 0.60 px on the eye pair. Two devices that could not get below 1 px were excluded, removing 34 hours.
 

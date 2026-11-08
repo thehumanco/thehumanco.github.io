@@ -1,5 +1,5 @@
 ---
-title: The RoboCap, for Robot Learning
+title: RoboCap, for Robot Learning
 date: September 2026
 order: 4
 author: Vincent Liu, Ademi Adeniji
@@ -17,7 +17,7 @@ unrelease: false
 
 Every generation of large-scale robot learning has been defined by the data it could afford to collect, and each source of that data comes with a known cost. Simulation scales with compute, but demands engineering effort that grows with the diversity it aims to produce. Teleoperation captures exactly the states and actions a robot needs at inference, but at the price of slow, unnatural demonstrations through cumbersome robot hardware. UMI-style handheld grippers deploy only the end-effector and scale further, yet they do not generalize past low-DoF manipulators. Egocentric capture, where a person simply wears a device and goes about their work, scales the furthest of all, because the bottleneck becomes human time rather than hardware.
 
-Because human poses must be retargetted fully onto a robot embodiment, the quality of its estimation dictates the resulting policy's accuracy. Therefore, a centimeter of hand-pose error becomes a centimeter of error in the action the robot imitates. Egocentric capture is a metrology problem before it is a video collection problem, and a large-scale 3D computer vision problem in practice. Centimeter-level accuracy has to hold under occlusion, motion blur, varied lighting, and operator diversity, on footage collected outside any lab. The field has not converged on an egocentric device the way it has on teleoperation and UMI rigs, and we think the reason is simple: the two halves of the problem, form factor and 3D algorithms, have never been available together. So we built it, and we are releasing both halves together: [RoboCap](https://robocap.io), a 250 g six-camera, dual-IMU hat designed for in-the-wild capture, and the [Grounded API](https://app.gsi.company), a suite of device-agnostic SLAM, depth estimation, and hand tracking algorithms tuned for it.
+Because human poses must be retargetted fully onto a robot embodiment, the quality of its estimation dictates the resulting policy's accuracy. Therefore, a centimeter of hand-pose error becomes a centimeter of error in the action the robot imitates. Egocentric capture is a metrology problem before it is a video collection problem, and a large-scale 3D computer vision problem in practice. Centimeter-level accuracy has to hold under occlusion, motion blur, varied lighting, and operator diversity, on footage collected outside any lab. The field has not converged on an egocentric device the way it has on teleoperation and UMI rigs, and we think the reason is simple: the two halves of the problem, form factor and 3D algorithms, have never been available together. So we built it, and we are releasing both halves together: [RoboCap](https://robocap.io), a 250 g six-camera, dual-IMU hat designed for in-the-wild capture, and [Grounded API](https://app.gsi.company), a suite of device-agnostic SLAM, depth estimation, and hand tracking algorithms tuned for it.
 
 ## A device designed from the math
 
@@ -131,7 +131,7 @@ Hand-tracking evaluation remains the weakest link, and not only for us. No publi
 
 ## Closing remarks
 
-Egocentric data is one of the most scalable sources available to robot learning, but collecting it at the precision and scale that policy learning requires has demanded two things at once: hardware built for 3D estimation, and algorithms robust enough to run unattended on in-the-wild footage. Neither has been something a team could simply buy or call. RoboCap and the Grounded API are our attempt to make both available.
+Egocentric data is one of the most scalable sources available to robot learning, but collecting it at the precision and scale that policy learning requires has demanded two things at once: hardware built for 3D estimation, and algorithms robust enough to run unattended on in-the-wild footage. Neither has been something a team could simply buy or call. RoboCap and Grounded API are our attempt to make both available.
 
 The result we find most consequential is not any single benchmark number, but what bootstrapping 3D labels for in-the-wild data implies about scale. If precise SLAM, depth estimation, and hand tracking do not require motion capture, then the diversity of hand-pose data is no longer bounded by the reach of instrumented spaces, and models trained this way can adapt better than models trained on motion capture itself. Both the device and the API are available today, and we expect the field to find failure modes in them that we have not.
 
