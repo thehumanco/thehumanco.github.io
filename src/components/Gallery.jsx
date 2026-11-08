@@ -50,9 +50,9 @@ export default function Gallery({ id, posts, footer }) {
           </p>
           <p className="type-body mt-4">
             Reach out to us at <TextLink href="mailto:hello@gsi.company">hello@gsi.company</TextLink>
-            <span className="mx-3 text-muted">·</span>
+            <span className="mx-2 text-muted"> · </span>
             <TextLink href={API_FORM}>Get an API invite code</TextLink>
-            <span className="mx-3 text-muted">·</span>
+            <span className="mx-2 text-muted"> · </span>
             <TextLink href={DATA_FORM}>Become a data partner</TextLink>
           </p>
         </div>

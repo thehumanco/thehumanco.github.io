@@ -12,7 +12,7 @@ unrelease: false
   <source src="/blogs/human-centric/launch.mp4" type="video/mp4">
 </video>
 
-<p class="paper-link"><a href="https://robocap.io">Buy a RoboCap</a><span class="sep">·</span><a href="https://docs.google.com/forms/d/e/1FAIpQLSdhS6DJrr3Es1JmTYO9cbKfbrTtg8QuwaZKF_PQqaLSFTiotQ/viewform?usp=header">Get an API invite code</a></p>
+<p class="paper-link"><a href="https://robocap.io">Buy a RoboCap</a><span class="sep"> · </span><a href="https://docs.google.com/forms/d/e/1FAIpQLSdhS6DJrr3Es1JmTYO9cbKfbrTtg8QuwaZKF_PQqaLSFTiotQ/viewform?usp=header">Get an API invite code</a></p>
 
 Action is older than language. Billions of years ago, our earliest biological predecessors had no language and no thoughts, but they moved, sensed, and changed their surroundings. In fact, grasping isn’t specific to humans or even primates. Evolution invented the grasp many times over: cephalopods with boneless arms, birds with talons, elephants with trunks, and primates with hands.
 
@@ -41,4 +41,4 @@ Sincerely,
 
 Ademi & Vincent
 
-<p class="paper-link"><a href="https://robocap.io">Buy a RoboCap</a><span class="sep">·</span><a href="https://docs.google.com/forms/d/e/1FAIpQLSdhS6DJrr3Es1JmTYO9cbKfbrTtg8QuwaZKF_PQqaLSFTiotQ/viewform?usp=header">Get an API invite code</a></p>
+<p class="paper-link"><a href="https://robocap.io">Buy a RoboCap</a><span class="sep"> · </span><a href="https://docs.google.com/forms/d/e/1FAIpQLSdhS6DJrr3Es1JmTYO9cbKfbrTtg8QuwaZKF_PQqaLSFTiotQ/viewform?usp=header">Get an API invite code</a></p>

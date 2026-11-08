@@ -130,6 +130,7 @@ function Landing() {
 // Placeholder art until posts set `cover:` (image or .mp4) in their frontmatter.
 // One painting per post (keyed by slug, so adding a post doesn't reshuffle the others).
 const MONETS = {
+  'robocap-10k': '/thumbnails/the-coalmen.jpg',
   'the-robocap-for-robot-learning': '/thumbnails/water-lilies.jpg',
   'the-human-centric-robotics-platform': '/thumbnails/parliament-sunset.jpg',
   'the-robotics-data-pareto-frontier': '/thumbnails/poppy-field.jpg',
@@ -291,7 +292,7 @@ function Post() {
         )}
         <div className="type-body mb-8">{back}</div>
         <Display id={TITLE_ID}>{post.title}</Display>
-        <Meta className="mt-2">{post.author}<span className="mx-3">·</span>{post.date}</Meta>
+        <Meta className="mt-2">{post.author}<span className="mx-2"> · </span>{post.date}</Meta>
         <div className="prose mt-8">
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
