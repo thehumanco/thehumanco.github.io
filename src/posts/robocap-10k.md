@@ -44,7 +44,7 @@ Head trajectories come from the Grounded API's multi-camera visual-inertial SLAM
   <figcaption>Hand pose estimates across workplaces, with the estimated MANO meshes rendered over the image (blue: left hand, magenta: right hand).</figcaption>
 </figure>
 
-We evaluate both against optical motion capture on RoboMoCap, recorded on the RoboCap itself. Over 153.4 hours and 4,669 trajectories, head pose reaches a median absolute trajectory error of 3.0 mm, with metric scale recovered to a median 0.17% without any scale alignment. On held-out test sequences, hands reach 4.5 mm PA-MPJPE over 21 keypoints. On the city-scale LaMAria benchmark, our SLAM scores 72.4, close to Aria's own SLAM at 75.9.
+We evaluate both against optical motion capture on RoboMoCap, recorded on the RoboCap itself. Over 153.4 hours and 4,669 trajectories, head pose reaches a mean absolute trajectory error of 3.19 mm, with metric scale recovered to a median 0.17% without any scale alignment. On held-out test sequences, hands reach 4.5 mm PA-MPJPE over 21 keypoints, and on our internal benchmark, where the true hand shape is known, they reach 9.2 mm of absolute error (MPJPE). On the city-scale LaMAria benchmark, our SLAM scores 72.4, close to Aria's own SLAM at 75.9.
 
 <figure class="figures">
   <div class="figure-table">
@@ -53,14 +53,15 @@ We evaluate both against optical motion capture on RoboMoCap, recorded on the Ro
         <tr><th>Label</th><th>Benchmark</th><th>Metric</th><th>Result</th></tr>
       </thead>
       <tbody>
-        <tr><td>Head pose</td><td>RoboMoCap, 153.4 h</td><td>Median ATE</td><td>3.0 mm</td></tr>
+        <tr><td>Head pose</td><td>RoboMoCap, 153.4 h</td><td>Mean ATE</td><td>3.19 mm</td></tr>
         <tr><td>Hand pose</td><td>RoboMoCap, held-out</td><td>PA-MPJPE</td><td>4.5 mm</td></tr>
+        <tr><td>Hand pose</td><td>GSI-Internal</td><td>MPJPE</td><td>9.2 mm</td></tr>
         <tr><td>Head pose</td><td>LaMAria, 27.5 h</td><td>Control-point score</td><td>72.4</td></tr>
         <tr><td>Calibration</td><td>All 216 devices</td><td>Median Sampson error</td><td>0.63 px</td></tr>
       </tbody>
     </table>
   </div>
-  <figcaption>Annotation accuracy. Head and hand poses are evaluated against optical motion capture; LaMAria scores against surveyed control points.</figcaption>
+  <figcaption>Annotation accuracy. Head and hand poses are evaluated against optical motion capture, and GSI-Internal mixes simulated and motion-capture sequences with known hand shape; LaMAria scores against surveyed control points.</figcaption>
 </figure>
 
 ## Standardized hardware, calibrated online
@@ -70,7 +71,7 @@ Because every hour comes from the same hardware design, there is no cross-device
 Factory calibration is where accuracy starts, not where it ends. Wearable rigs deform under mechanical and thermal stress, and across our fleet the rotation between stereo cameras drifts by about half a degree, enough for a 1–2 cm depth bias at manipulation range. So for every recording session we re-estimate the rotations of all six cameras jointly from natural correspondences in the footage, holding the factory translations fixed so metric scale stays anchored. Across the release, every one of the 216 devices averages below 1 px of epipolar error, with a median of 0.63 px on the front pair and 0.60 px on the eye pair. Two devices that could not get below 1 px were excluded, removing 34 hours.
 
 <figure class="figures">
-  <img src="/blogs/robocap-10k/05_calibration.jpg" alt="Per-device calibration error after online calibration">
+  <img src="/blogs/robocap-10k/05_calibration.jpg" alt="Per-device calibration error after online calibration" style="width: 50%; margin-inline: auto">
   <figcaption>Calibration error per device after online calibration. Held-out Sampson error of each of the 216 devices in the release. Dashed lines mark the median; dotted lines mark 1 px.</figcaption>
 </figure>
 
