@@ -104,7 +104,7 @@ RoboCap-10k is the only released dataset that combines calibrated stereo, metric
   <div class="figure-table">
     <table>
       <thead>
-        <tr><th>Dataset</th><th>Hours</th><th>Single device</th><th>Calibrated stereo</th><th>Metric head</th><th>3D hands</th><th>Occupational</th></tr>
+        <tr><th>Dataset</th><th>Released ego hours</th><th>Single device</th><th>Calibrated stereo</th><th>Metric head</th><th>3D hands</th><th>Occupational</th></tr>
       </thead>
       <tbody>
         <tr><td>Ego4D</td><td>3,670</td><td>✗</td><td>✗</td><td>✗</td><td>✗</td><td>✗</td></tr>
