@@ -204,7 +204,12 @@ function PageHead({ title, description, url }) {
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       <meta property="og:url" content={url} />
+      <meta property="og:site_name" content="Grounded Superintelligence" />
+      <meta property="og:image" content="https://gsi.company/og-image.png" />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
       <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:image" content="https://gsi.company/og-image.png" />
       <link rel="canonical" href={url} />
     </Head>
   )
