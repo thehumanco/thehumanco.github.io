@@ -11,7 +11,7 @@ unrelease: false
   <source src="/blogs/robocap-10k/teaser.mp4" type="video/mp4">
 </video>
 
-<p class="paper-link"><a href="/blogs/robocap-10k/robocap_10k_a_metrically_accurate_egocentric_dataset_for_robot_learning.pdf">Read the technical report (PDF)</a><span class="sep"> · </span><a href="https://huggingface.co/datasets/groundedsi/RoboCap-10k">Download the dataset</a></p>
+<p class="paper-link"><a href="/blogs/robocap-10k/robocap_10k_a_metrically_accurate_egocentric_dataset_for_robot_learning.pdf">Read the technical report (PDF)</a><span class="sep"> · </span><a href="https://robocap10k.com">Access the dataset</a></p>
 
 Egocentric video is the most scalable source of manipulation data for robot learning, but video alone is not supervision. A robot imitates poses, not pixels, so every hour of footage becomes useful only once someone estimates where the head and hands were, in meters, at every frame. The largest egocentric corpora today are monocular, where metric scale can only be guessed from learned priors. The most accurate ones are captured in motion-capture labs with a handful of participants. Federated efforts pool heterogeneous devices and inherit their differences, and headset-labeled datasets inherit whatever a real-time tracker produced, with no raw multi-view data to re-estimate from.
 
@@ -28,11 +28,11 @@ These are curated hours, not raw recording time. An episode is one continuous cl
   <figcaption>Corpus statistics. Left: share of released hours by country. Right: share of episodes by length in 2 s bins; episodes longer than 120 s are grouped in the final bar.</figcaption>
 </figure>
 
-Every task is labeled with the industry vertical it was recorded in and, independently, the skill group it requires, and is rated by difficulty. Easy tasks are single-step and need no training, like sorting groundnuts. Medium tasks need coordination or planning, like shaping dough into loaves. Hard tasks are skilled work that takes training or expertise, like soldering components onto PCB panels, weaving cane onto chair frames, or stitching garments on industrial machines; 172 of the 619 tasks are hard. The distribution is long-tailed by design, and because one label often covers several workflows, these counts are a floor on the true variety.
+Every task is labeled with the industry vertical it was recorded in and rated by difficulty. Easy tasks are single-step and need no training, like sorting groundnuts. Medium tasks need coordination or planning, like shaping dough into loaves. Hard tasks are skilled work that takes training or expertise, like soldering components onto PCB panels, weaving cane onto chair frames, or stitching garments on industrial machines; 172 of the 619 tasks are hard. The distribution is long-tailed by design, and because one label often covers several workflows, these counts are a floor on the true variety.
 
 <figure class="figures">
-  <img src="/blogs/robocap-10k/04_taxonomy.jpg" alt="Distinct tasks per industry vertical and per skill group">
-  <figcaption>RoboCap-10k taxonomy. Left: distinct tasks per industry vertical. Right: share of distinct tasks per skill group. Both are broken down by difficulty.</figcaption>
+  <img src="/blogs/robocap-10k/04_taxonomy.jpg" alt="Distinct tasks per industry vertical, by difficulty">
+  <figcaption>RoboCap-10k taxonomy: distinct tasks per industry vertical, broken down by difficulty.</figcaption>
 </figure>
 
 ## Action labels with sub-centimeter precision
