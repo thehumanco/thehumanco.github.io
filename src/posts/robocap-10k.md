@@ -15,24 +15,24 @@ unrelease: false
 
 Egocentric video is the most scalable source of manipulation data for robot learning, but video alone is not supervision. A robot imitates poses, not pixels, so every hour of footage becomes useful only once someone estimates where the head and hands were, in meters, at every frame. The largest egocentric corpora today are monocular, where metric scale can only be guessed from learned priors. The most accurate ones are captured in motion-capture labs with a handful of participants. Federated efforts pool heterogeneous devices and inherit their differences, and headset-labeled datasets inherit whatever a real-time tracker produced, with no raw multi-view data to re-estimate from.
 
-Today we are releasing **RoboCap-10k**: 10,000 curated hours of unscripted, bimanual manipulation, recorded by workers during their paid shifts in 11 countries, across 21 industry verticals, 365 workplace types, and 619 distinct tasks. Every hour was captured on one device, [RoboCap](/blogs/the-robocap-for-robot-learning), and processed by one 3D stack, [Grounded API](https://app.gsi.company). Every frame carries a gravity-aligned 6-DoF head pose and world-frame MANO hand poses, and every episode carries two tiers of language. We release the raw synchronized streams alongside the labels, so they can be audited, and regenerated as methods improve.
+Today we are releasing **RoboCap-10k**: 10,000 curated hours of unscripted, bimanual manipulation, recorded by workers during their paid shifts in 11 countries, across 18 task families, 200 task types, and 2,000 distinct tasks. Every hour was captured on one device, [RoboCap](/blogs/the-robocap-for-robot-learning), and processed by one 3D stack, [Grounded API](https://app.gsi.company). Every frame carries a gravity-aligned 6-DoF head pose and metric MANO hand poses, and every episode carries two tiers of language. We release the raw synchronized streams alongside the labels, so they can be audited, and regenerated as methods improve.
 
 ## Real, in-the-wild, occupational work
 
 Most egocentric datasets record household chores or tabletop tasks performed for the camera. RoboCap-10k records occupational work: bread and pastry production, industrial garment stitching, engine and motorcycle repair, circuit-board soldering, rebar tying, onion harvesting. Wearers are existing employees recording during their regular 6–12 hour shifts; the hat is the only change to their work, and nothing is scripted, staged, or repeated for the camera. Policies degrade sharply under visual shift, so the clutter, lighting, and tools of each workplace are left exactly as they are.
 
-These are curated hours, not raw recording time. An episode is one continuous clip in which a person performs one recognizable task with both hands tracked and SLAM available, and it is kept only if it passes calibration, SLAM, and hand-tracking checks. The corpus holds 1,363,915 episodes, with a median length of 17.8 s, about a billion synchronized timesteps, and 6.5 billion camera frames across six streams.
+These are curated hours, not raw recording time. An episode is one continuous clip in which a person performs one recognizable task with both hands tracked and SLAM available, and it is kept only if it passes calibration, SLAM, and hand-tracking checks. The corpus holds 1,378,462 episodes, with a median length of 17.8 s, about a billion synchronized timesteps, and 6.5 billion camera frames across six streams.
 
 <figure class="figures">
   <img src="/blogs/robocap-10k/03_corpus_stats.jpg" alt="Released hours by country and episode length distribution">
-  <figcaption>Corpus statistics. Left: share of released hours by country. Right: share of episodes by length in 2 s bins; episodes longer than 120 s are grouped in the final bar.</figcaption>
+  <figcaption>Corpus statistics. Left: share of released hours by country. Right: share of episodes by length in 2 s bins; episodes longer than 120 s, the longest 1.3%, are grouped in the final bar.</figcaption>
 </figure>
 
-Every task is labeled with the industry vertical it was recorded in and rated by difficulty. Easy tasks are single-step and need no training, like sorting groundnuts. Medium tasks need coordination or planning, like shaping dough into loaves. Hard tasks are skilled work that takes training or expertise, like soldering components onto PCB panels, weaving cane onto chair frames, or stitching garments on industrial machines; 172 of the 619 tasks are hard. The distribution is long-tailed by design, and because one label often covers several workflows, these counts are a floor on the true variety.
+The taxonomy is derived from the data itself. Every episode's task caption is embedded and clustered into 2,000 tasks, which group into 200 task types and 18 task families, so every episode belongs to exactly one task, type, and family, and the same procedure can be re-run as the corpus grows. Each task is rated by difficulty. Easy tasks are single-step and need no training, like sorting groundnuts. Medium tasks need coordination or planning, like shaping dough into loaves. Hard tasks are skilled work that takes training or expertise, like soldering components onto PCB panels, weaving cane onto chair frames, or stitching garments on industrial machines; 470 of the 2,000 tasks are hard. The distribution is long-tailed: the four largest families, from machine sewing to manual crafting, hold 45% of the hours, while 1,949 tasks have at least an hour of footage each.
 
 <figure class="figures">
-  <img src="/blogs/robocap-10k/04_taxonomy.jpg" alt="Distinct tasks per industry vertical, by difficulty">
-  <figcaption>RoboCap-10k taxonomy: distinct tasks per industry vertical, broken down by difficulty.</figcaption>
+  <img src="/blogs/robocap-10k/04_taxonomy.jpg" alt="Share of hours per task family, and the long tail of 2,000 tasks">
+  <figcaption>RoboCap-10k taxonomy. Left: share of hours per task family, with its number of task types and tasks. Right: the 2,000 tasks ranked by hours, as a cumulative share of footage.</figcaption>
 </figure>
 
 ## Action labels with sub-centimeter precision
@@ -57,7 +57,7 @@ We evaluate both against optical motion capture on RoboMoCap, recorded on RoboCa
         <tr><td>Hand pose</td><td>RoboMoCap, held-out</td><td>PA-MPJPE</td><td>4.5 mm</td></tr>
         <tr><td>Hand pose</td><td>GSI-Internal</td><td>MPJPE</td><td>9.2 mm</td></tr>
         <tr><td>Head pose</td><td>LaMAria, 27.5 h</td><td>Control-point score</td><td>72.4</td></tr>
-        <tr><td>Calibration</td><td>All 216 devices</td><td>Median Sampson error</td><td>0.63 px</td></tr>
+        <tr><td>Calibration</td><td>All released devices</td><td>Median Sampson error</td><td>0.62 px</td></tr>
       </tbody>
     </table>
   </div>
@@ -68,16 +68,16 @@ We evaluate both against optical motion capture on RoboMoCap, recorded on RoboCa
 
 Because every hour comes from the same hardware design, there is no cross-device domain shift in either the imagery or the quality of the 3D labels. RoboCap is a 250 g hat with six hardware-synchronized global-shutter cameras: two fisheye stereo pairs that keep the hands inside a metric stereo frustum across the reach envelope, and two lateral wide-angle cameras that catch reaches leaving it. Two IMUs at 200 Hz share the cameras' clock.
 
-Factory calibration is where accuracy starts, not where it ends. Wearable rigs deform under mechanical and thermal stress, and across our fleet the rotation between stereo cameras drifts by about half a degree, enough for a 1–2 cm depth bias at manipulation range. So for every recording session we re-estimate the rotations of all six cameras jointly from natural correspondences in the footage, holding the factory translations fixed so metric scale stays anchored. Across the release, every one of the 216 devices averages below 1 px of epipolar error, with a median of 0.63 px on the front pair and 0.60 px on the eye pair. Two devices that could not get below 1 px were excluded, removing 34 hours.
+Factory calibration is where accuracy starts, not where it ends. Wearable rigs deform under mechanical and thermal stress, and across our fleet the rotation between stereo cameras drifts by about half a degree, enough for a 1–2 cm depth bias at manipulation range. So for every recording session we re-estimate the rotations of all six cameras jointly from natural correspondences in the footage, holding the factory translations fixed so metric scale stays anchored. Across the release, every device averages below 1 px of epipolar error, with a median of 0.62 px on both the front and eye pairs.
 
 <figure class="figures">
   <img src="/blogs/robocap-10k/05_calibration.jpg" alt="Per-device calibration error after online calibration" style="width: 50%; margin-inline: auto">
-  <figcaption>Calibration error per device after online calibration. Held-out Sampson error of each of the 216 devices in the release. Dashed lines mark the median; dotted lines mark 1 px.</figcaption>
+  <figcaption>Calibration error per device after online calibration. Held-out Sampson error of each device in the release. Dashed lines mark the median; dotted lines mark 1 px.</figcaption>
 </figure>
 
 ## Task and subtask captioning
 
-Manipulation at work is long-horizon, so every interval carries one free-text sparse caption describing its overall intent, and is cut into consecutive dense units describing what happens at each moment. Each dense unit records the scene, the sub-task it belongs to, and the physical action, which together supervise both task planning and short-horizon control. The two tiers are generated independently, and captions for 1,000 hours were reviewed by people against the source video.
+Manipulation at work is long-horizon, so every episode carries a free-text caption of its scene and overall task, and is cut into consecutive dense units describing what happens at each moment. Each dense unit records the sub-task it belongs to and the physical action, which together supervise both task planning and short-horizon control. Both tiers come from the same model call, so they are consistent by construction. Captions for 1,000 hours were reviewed by people against the source video and used to tune the pipeline that captioned the remaining 9,000.
 
 <figure class="figures">
   <div class="figure-table">
@@ -124,8 +124,8 @@ RoboCap-10k is the only released dataset that combines calibrated stereo, metric
 
 ## Ready to train, safe to share
 
-Every episode ships in two formats. The LeRobot format is for training: each camera is an H.265 MP4, and per-frame head pose, MANO parameters and keypoints for both hands, and IMU readings are stored in Parquet tables indexed by frame, so the corpus drops into existing dataloaders. A Rerun recording of the same episode is for inspection, placing the six streams, head trajectory, and hand meshes in one 3D world frame on a common timeline. Each episode also carries its factory and online-corrected calibration and a JSON sidecar with taxonomy labels, captions, and per-session quality statistics. The dataset is released under CC BY 4.0, open to research and commercial use alike.
+Every episode ships in two formats. The LeRobot v3.0 format is for training, hosted on Hugging Face as 412 self-contained shards of about 25 hours each, roughly 127 TB in total. Each camera is an undistorted, face-blurred H.265 MP4, and the per-frame head pose and MANO parameters and keypoints for both hands, with per-hand validity flags, are stored in Parquet tables indexed by frame, so the corpus drops into existing dataloaders. Captions live in per-episode metadata, and every episode's intrinsics and extrinsics ship with its shard. A Rerun recording of the same episode, hosted by Rerun, is for inspection, placing the six streams, head trajectory, hand keypoints, and dense captions in one 3D world frame on a common timeline. The dataset is released under CC BY 4.0, open to research and commercial use alike.
 
-Every operator signed an informed consent form, every partner enterprise signed a data agreement, and wearers are compensated on top of their wages. No audio is recorded, and released metadata identifies only the country and site type. Off-the-shelf face detectors miss many faces in this footage, seen from above, through fisheye optics, at the distorted periphery, so we trained our own on roughly 1,000 hours of labeled RoboCap footage. At the released operating point it recalls 77.3% of faces at 92.4% precision, against 25.1% for RetinaFace, and detections are tracked and propagated across frames so a face missed in one frame is still covered by its neighbors. Blurring is irreversible; the originals are not distributed.
+Every operator signed an informed consent form, every partner enterprise signed a data agreement, and wearers are compensated on top of their wages. No audio is recorded, and released metadata never identifies the site, employer, or participant. Off-the-shelf face detectors miss many faces in this footage, seen from above, through fisheye optics, at the distorted periphery, so we trained our own on roughly 1,000 hours of labeled RoboCap footage. At the released operating point it recalls 77.3% of faces at 92.4% precision, against 25.1% for RetinaFace, and detections are tracked and propagated across frames so a face missed in one frame is still covered by its neighbors. Blurring is irreversible; the originals are not distributed.
 
 We release RoboCap-10k as pretraining data for generalist manipulation policies and world models, and as a testbed for a question the field has not yet answered: how much does the precision of human action labels matter at scale?
