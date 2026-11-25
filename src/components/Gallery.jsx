@@ -5,6 +5,7 @@ import { Content, TextLink } from './ui'
 
 const API_FORM = 'https://docs.google.com/forms/d/e/1FAIpQLSdhS6DJrr3Es1JmTYO9cbKfbrTtg8QuwaZKF_PQqaLSFTiotQ/viewform?usp=header'
 const DATA_FORM = 'https://forms.gle/q4L2SrzejspumE819'
+const JOIN_FORM = 'https://docs.google.com/forms/d/e/1FAIpQLSfLpl2lcKrDnBpbdzy2-4iGu1MyFZq1ic0JweOZm8lgzyLtyQ/viewform'
 
 const pad = (n) => String(n).padStart(2, '0')
 // "September 2026" -> "Sep 2026"
@@ -49,7 +50,7 @@ export default function Gallery({ id, posts, footer }) {
             Abbeel, Lerrel Pinto, Rob Fergus, Milan Kovac, Thomas Wolf, Naval Ravikant, and others.
           </p>
           <p className="type-body mt-4">
-            Reach out to us at <TextLink href="mailto:hello@gsi.company">hello@gsi.company</TextLink>
+            <TextLink href={JOIN_FORM}>Join us</TextLink>
             <span className="mx-2 text-muted"> · </span>
             <TextLink href={API_FORM}>Get an API invite code</TextLink>
             <span className="mx-2 text-muted"> · </span>
